@@ -53,7 +53,6 @@
 .<br/>
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -71,7 +70,6 @@ as an argument to a parametrized type family (here <span class="inlinecode"><spa
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -89,7 +87,6 @@ Some will violate the positivity rule.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -105,7 +102,6 @@ Some will violate the positivity rule.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -123,7 +119,6 @@ so we have to manually write a more powerful one.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -134,13 +129,12 @@ so we have to manually write a more powerful one.
 
 <br/>
 <span class="id" title="keyword">Check</span> (<a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree_ind"><span class="id" title="definition">nat_tree_ind</span></a> :<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <a id="P:216" class="idref" href="#P:216"><span class="id" title="binder">P</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>,                              <span class="comment">(*&nbsp;predicate&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> (<a id="n:217" class="idref" href="#n:217"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="l:218" class="idref" href="#l:218"><span class="id" title="binder">l</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>), <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> (<a class="idref" href="cpdt_notes.html#Nested_inductive_types.NNode"><span class="id" title="constructor">NNode</span></a> <a class="idref" href="cpdt_notes.html#n:217"><span class="id" title="variable">n</span></a> <a class="idref" href="cpdt_notes.html#l:218"><span class="id" title="variable">l</span></a>)<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a>   <span class="comment">(*&nbsp;NNode&nbsp;hypotesis&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="t:219" class="idref" href="#t:219"><span class="id" title="binder">t</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>, <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> <a class="idref" href="cpdt_notes.html#t:219"><span class="id" title="variable">t</span></a>                             <span class="comment">(*&nbsp;final&nbsp;goal&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <a id="P:216" class="idref" href="#P:216"><span class="id" title="binder">P</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>,                              <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> (<a id="n:217" class="idref" href="#n:217"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="l:218" class="idref" href="#l:218"><span class="id" title="binder">l</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>), <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> (<a class="idref" href="cpdt_notes.html#Nested_inductive_types.NNode"><span class="id" title="constructor">NNode</span></a> <a class="idref" href="cpdt_notes.html#n:217"><span class="id" title="variable">n</span></a> <a class="idref" href="cpdt_notes.html#l:218"><span class="id" title="variable">l</span></a>)<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a>   <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="t:219" class="idref" href="#t:219"><span class="id" title="binder">t</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>, <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> <a class="idref" href="cpdt_notes.html#t:219"><span class="id" title="variable">t</span></a>                             <br/>
 ).<br/>
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -150,7 +144,6 @@ so we have to manually write a more powerful one.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -208,7 +201,6 @@ so we have to manually write a more powerful one.
 &nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Replace&nbsp;True&nbsp;(resp&nbsp;False)&nbsp;with&nbsp;"toProp&nbsp;true"&nbsp;(resp&nbsp;false)&nbsp;*)</span><br/>
 
 <br/>
 &nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Ht</span> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#True"><span class="id" title="inductive">True</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="cpdt_notes.html#toProp"><span class="id" title="definition">toProp</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>). { <span class="id" title="tactic">reflexivity</span>. }<br/>
@@ -223,7 +215,6 @@ so we have to manually write a more powerful one.
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -233,7 +224,6 @@ so we have to manually write a more powerful one.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -271,7 +261,6 @@ The differneces are :
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -293,7 +282,6 @@ The differneces are :
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -307,7 +295,6 @@ See how to define predicates with inductive definitions.
 <div class="code">
 
 <br/>
-<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -327,7 +314,6 @@ See how to define predicates with inductive definitions.
 &nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -346,7 +332,6 @@ See how to define predicates with inductive definitions.
 &nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">tauto</span>. <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -370,7 +355,6 @@ See how to define predicates with inductive definitions.
 &nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">
@@ -403,7 +387,6 @@ See how to define predicates with inductive definitions.
 <span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#Propositional"><span class="id" title="section">Propositional</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
 </div>
 
 <div class="doc">

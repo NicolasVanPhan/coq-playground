@@ -7,7 +7,7 @@ COQDEP    ?= coqdep
 
 # Flags
 COQFLAGS  ?= -q
-COQDOCFLAGS ?= --html --utf8 --parse-comments
+COQDOCFLAGS ?= --html --utf8 --toc
 
 # Sources (all .v in this directory; or set explicitly: VFILES = a.v b.v ...)
 VFILES    := $(wildcard *.v)
