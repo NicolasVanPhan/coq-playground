@@ -1,30 +1,57 @@
-# File: Makefile
+# -------- Makefile (multi-file Coq + docs) --------
 
-COQC=coqc
-COQDOC=coqdoc
-COQFLAGS=-q
+# Tools
+COQC      ?= coqc
+COQDOC    ?= coqdoc
+COQDEP    ?= coqdep
 
-# Your source file
-SRC=peano.v
+# Flags
+COQFLAGS  ?= -q
+COQDOCFLAGS ?= --html --utf8 --parse-comments
 
-# Base name (without extension)
-BASE=$(basename $(SRC))
+# Sources (all .v in this directory; or set explicitly: VFILES = a.v b.v ...)
+VFILES    := $(wildcard *.v)
+VOFILES   := $(VFILES:.v=.vo)
 
-# Targets
-all: $(BASE).vo doc
+# Docs output directory
+DOCSDIR   ?= docs
 
-# Compile the .v file
-$(BASE).vo: $(SRC)
-	$(COQC) $(COQFLAGS) $(SRC)
+# Dependency file
+DEPFILE   := .coqdeps
 
-# Generate documentation with coqdoc
-doc: $(SRC)
-	$(COQDOC) --html --parse-comments $(SRC)
+# Default target
+.PHONY: all
+all: $(VOFILES) doc
 
-# Clean up build artifacts
+# Compile each .v -> .vo
+%.vo: %.v
+	$(COQC) $(COQFLAGS) $<
+
+# Generate (or refresh) dependencies
+# Run this first so that included .v deps are known before building .vo
+$(DEPFILE): $(VFILES)
+	@echo "Generating Coq dependencies..."
+	@$(COQDEP) $(COQFLAGS) $(VFILES) > $(DEPFILE)
+
+# Include dependencies if present
+# (This makes 'make' rebuild files in the right order.)
+-include $(DEPFILE)
+
+# Documentation for all files, into docs/
+.PHONY: doc
+doc: $(VFILES)
+	@mkdir -p $(DOCSDIR)
+	$(COQDOC) $(COQDOCFLAGS) -d $(DOCSDIR) $(VFILES)
+
+# Clean
+.PHONY: clean
 clean:
-	rm -f *.vo *.vok *.vos *.glob .*.aux *.html *.css
+	rm -f $(VOFILES) *.vok *.vos *.glob .*.aux
+	rm -f $(DEPFILE)
+	rm -rf $(DOCSDIR)
 
-.PHONY: all clean doc
+# Convenience: just build deps
+.PHONY: deps
+deps: $(DEPFILE)
 
-# end
+# ---------------------------------------------------

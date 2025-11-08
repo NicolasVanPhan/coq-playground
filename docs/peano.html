@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>peano</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library peano</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Bool</span> <span class="id" title="library">List</span>.<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Asymmetric</span> <span class="id" title="var">Patterns</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Goal: Practice pattern matching and recursion on inductive types.
+
+<div class="paragraph"> </div>
+
+Tasks:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Define <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span>
+
+</li>
+<li> Define <span class="inlinecode"><span class="id" title="var">mult</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span>
+
+</li>
+<li> Define <span class="inlinecode"><span class="id" title="var">exp</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span> (exponentiation)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Stretch: Prove simple properties like:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">thm1</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">n</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">thm2</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode">0</span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">n</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">thm3</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">m</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">add</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode"><span class="id" title="var">m</span>)</span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">thm4</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">add</span></span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> (commutativity of addition)
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <a id="Mynat" class="idref" href="#Mynat"><span class="id" title="module">Mynat</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="Mynat.mynat" class="idref" href="#Mynat.mynat"><span class="id" title="definition, inductive"><span id="Mynat.mynat_rect" class="id"><span id="Mynat.mynat_ind" class="id"><span id="Mynat.mynat_rec" class="id"><span id="Mynat.mynat_sind" class="id">mynat</span></span></span></span></span></a> : <span class="id" title="keyword">Set</span> :=<br/>
+| <a id="Mynat.O" class="idref" href="#Mynat.O"><span class="id" title="constructor">O</span></a> : <a class="idref" href="peano.html#mynat:1"><span class="id" title="inductive">mynat</span></a><br/>
+| <a id="Mynat.S" class="idref" href="#Mynat.S"><span class="id" title="constructor">S</span></a> : <a class="idref" href="peano.html#mynat:1"><span class="id" title="inductive">mynat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="peano.html#mynat:1"><span class="id" title="inductive">mynat</span></a><br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="Mynat.add" class="idref" href="#Mynat.add"><span class="id" title="definition">add</span></a> (<a id="n:3" class="idref" href="#n:3"><span class="id" title="binder">n</span></a> <a id="m:4" class="idref" href="#m:4"><span class="id" title="binder">m</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>) : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="peano.html#n:3"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="peano.html#Mynat.O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="peano.html#m:4"><span class="id" title="variable">m</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="peano.html#Mynat.S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">n'</span> ⇒ <a class="idref" href="peano.html#Mynat.S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="peano.html#add:5"><span class="id" title="definition">add</span></a> <span class="id" title="var">n'</span> <a class="idref" href="peano.html#m:4"><span class="id" title="variable">m</span></a>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now let's prove some basics on additions  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="Mynat.thm1" class="idref" href="#Mynat.thm1"><span class="id" title="lemma">thm1</span></a> : <span class="id" title="keyword">∀</span> <a id="n:7" class="idref" href="#n:7"><span class="id" title="binder">n</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>, <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#n:7"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#Mynat.O"><span class="id" title="constructor">O</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="peano.html#n:7"><span class="id" title="variable">n</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IHn</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="Mynat.thm2" class="idref" href="#Mynat.thm2"><span class="id" title="lemma">thm2</span></a> : <span class="id" title="keyword">∀</span> <a id="n:8" class="idref" href="#n:8"><span class="id" title="binder">n</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>, <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#Mynat.O"><span class="id" title="constructor">O</span></a> <a class="idref" href="peano.html#n:8"><span class="id" title="variable">n</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="peano.html#n:8"><span class="id" title="variable">n</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="Mynat.thm3" class="idref" href="#Mynat.thm3"><span class="id" title="lemma">thm3</span></a> : <span class="id" title="keyword">∀</span> <a id="n:9" class="idref" href="#n:9"><span class="id" title="binder">n</span></a> <a id="m:10" class="idref" href="#m:10"><span class="id" title="binder">m</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>, <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#n:9"><span class="id" title="variable">n</span></a> (<a class="idref" href="peano.html#Mynat.S"><span class="id" title="constructor">S</span></a> <a class="idref" href="peano.html#m:10"><span class="id" title="variable">m</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="peano.html#Mynat.S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#n:9"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#m:10"><span class="id" title="variable">m</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">m</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IHn</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="Mynat.thm4" class="idref" href="#Mynat.thm4"><span class="id" title="lemma">thm4</span></a> : <span class="id" title="keyword">∀</span> <a id="n:11" class="idref" href="#n:11"><span class="id" title="binder">n</span></a> <a id="m:12" class="idref" href="#m:12"><span class="id" title="binder">m</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>, <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#n:11"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#m:12"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#m:12"><span class="id" title="variable">m</span></a> <a class="idref" href="peano.html#n:11"><span class="id" title="variable">n</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;- <span class="comment">(*&nbsp;Base&nbsp;case&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">m</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">rewrite</span> (<a class="idref" href="peano.html#Mynat.thm1"><span class="id" title="lemma">thm1</span></a> <span class="id" title="var">m</span>). <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="comment">(*&nbsp;Inductive&nbsp;case&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> → <a class="idref" href="peano.html#Mynat.thm3"><span class="id" title="lemma">thm3</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+My first intuitiion for mult is :
+
+<div class="paragraph"> </div>
+
+<pre>
+  4 * 3 = 4 + 4 + 4
+        = 4 + (4 * 2)
+        = 4 + (4 + (4 * 1))
+        = 4 + (4 + (4 + (4 * 0)))
+        = 4 + (4 + (4 + 0))
+        = 4 + 4 + 4 + 0
+        = 4 + 4 + 4
+</pre>
+
+<div class="paragraph"> </div>
+
+  The recursive pattern here is popping out a '4' and decrement the multiplier.
+  <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">×</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">×</span> <span class="inlinecode">(<span class="id" title="var">m</span>-1))</span>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="Mynat.mult_v1" class="idref" href="#Mynat.mult_v1"><span class="id" title="definition">mult_v1</span></a> (<a id="n:13" class="idref" href="#n:13"><span class="id" title="binder">n</span></a> <a id="m:14" class="idref" href="#m:14"><span class="id" title="binder">m</span></a> : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a>) : <a class="idref" href="peano.html#Mynat.mynat"><span class="id" title="inductive">mynat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="peano.html#m:14"><span class="id" title="variable">m</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="peano.html#Mynat.O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="peano.html#Mynat.O"><span class="id" title="constructor">O</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="peano.html#Mynat.S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">m'</span> ⇒ <a class="idref" href="peano.html#Mynat.add"><span class="id" title="definition">add</span></a> <a class="idref" href="peano.html#n:13"><span class="id" title="variable">n</span></a> (<a class="idref" href="peano.html#mult_v1:15"><span class="id" title="definition">mult_v1</span></a> <a class="idref" href="peano.html#n:13"><span class="id" title="variable">n</span></a> <span class="id" title="var">m'</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="peano.html#Mynat"><span class="id" title="module">Mynat</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It's not tail-recursive though
+    Later we'll try to define a tail-recursive variant,
+    and prove it equivalent to that one.
+    For now let's just reason on that non-tail-recursive v1.
+
+<div class="paragraph"> </div>
+
+ Thoughts : What about an inductive definition of add ?
+
+<div class="paragraph"> </div>
+
+Something like :
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="add" class="idref" href="#add"><span class="id" title="definition, inductive"><span id="add_ind" class="id"><span id="add_sind" class="id">add</span></span></span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span> :=<br/>
+| <a id="Add_0" class="idref" href="#Add_0"><span class="id" title="constructor">Add_0</span></a> : <a class="idref" href="peano.html#add:17"><span class="id" title="inductive">add</span></a> 0 0 0<br/>
+| <a id="Add_S" class="idref" href="#Add_S"><span class="id" title="constructor">Add_S</span></a> (<a id="n:19" class="idref" href="#n:19"><span class="id" title="binder">n</span></a> <a id="m:20" class="idref" href="#m:20"><span class="id" title="binder">m</span></a> <a id="p:21" class="idref" href="#p:21"><span class="id" title="binder">p</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="IH:22" class="idref" href="#IH:22"><span class="id" title="binder">IH</span></a> : <a class="idref" href="peano.html#add:17"><span class="id" title="inductive">add</span></a> <a class="idref" href="peano.html#n:19"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#m:20"><span class="id" title="variable">m</span></a> <a class="idref" href="peano.html#p:21"><span class="id" title="variable">p</span></a>) : <a class="idref" href="peano.html#add:17"><span class="id" title="inductive">add</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="peano.html#n:19"><span class="id" title="variable">n</span></a>) <a class="idref" href="peano.html#m:20"><span class="id" title="variable">m</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="peano.html#p:21"><span class="id" title="variable">p</span></a>)<br/>
+| <a id="Add_C" class="idref" href="#Add_C"><span class="id" title="constructor">Add_C</span></a> (<a id="n:23" class="idref" href="#n:23"><span class="id" title="binder">n</span></a> <a id="m:24" class="idref" href="#m:24"><span class="id" title="binder">m</span></a> <a id="p:25" class="idref" href="#p:25"><span class="id" title="binder">p</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="IH:26" class="idref" href="#IH:26"><span class="id" title="binder">IH</span></a> : <a class="idref" href="peano.html#add:17"><span class="id" title="inductive">add</span></a> <a class="idref" href="peano.html#n:23"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#m:24"><span class="id" title="variable">m</span></a> <a class="idref" href="peano.html#p:25"><span class="id" title="variable">p</span></a>) : <a class="idref" href="peano.html#add:17"><span class="id" title="inductive">add</span></a> <a class="idref" href="peano.html#m:24"><span class="id" title="variable">m</span></a> <a class="idref" href="peano.html#n:23"><span class="id" title="variable">n</span></a> <a class="idref" href="peano.html#p:25"><span class="id" title="variable">p</span></a><br/>
+.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

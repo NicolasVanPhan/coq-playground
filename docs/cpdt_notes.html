@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>cpdt_notes</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library cpdt_notes</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab1"></a><h1 class="section">3.8 - Nested Inductive Types</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <a id="Nested_inductive_types" class="idref" href="#Nested_inductive_types"><span class="id" title="module">Nested_inductive_types</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab2"></a><h2 class="section">Q: Give an example of nested inductive type</h2>
+ </div><details><summary>Answer</summary><div class="doc"> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="Nested_inductive_types.nat_tree" class="idref" href="#Nested_inductive_types.nat_tree"><span class="id" title="definition, inductive"><span id="Nested_inductive_types.nat_tree_rect" class="id"><span id="Nested_inductive_types.nat_tree_ind" class="id"><span id="Nested_inductive_types.nat_tree_rec" class="id"><span id="Nested_inductive_types.nat_tree_sind" class="id">nat_tree</span></span></span></span></span></a> : <span class="id" title="keyword">Set</span> :=<br/>
+| <a id="Nested_inductive_types.NNode" class="idref" href="#Nested_inductive_types.NNode"><span class="id" title="constructor">NNode</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cpdt_notes.html#nat_tree:214"><span class="id" title="inductive">nat_tree</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#nat_tree:214"><span class="id" title="inductive">nat_tree</span></a><br/>
+.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab3"></a><h2 class="section">Q: Why is it called "nested" ?</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Because it uses the type we're defining (here <span class="inlinecode"><span class="id" title="var">nat_tree</span></span>)
+as an argument to a parametrized type family (here <span class="inlinecode"><span class="id" title="var">list</span></span>).
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab4"></a><h2 class="section">Q: What's the problem with it ?</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Not all nested inductive type definitions will be allowed.
+Some will violate the positivity rule.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab5"></a><h2 class="section">Q: Give an example of type definition violating the positivity rule</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+<div class="paragraph"> </div>
+
+ TODO : Answer this one 
+<div class="paragraph"> </div>
+
+  </div> </details> <div class="doc">  
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab6"></a><h2 class="section">Q: What is the usual problem with nested inductive types ?</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+The generated induction principle is too weak,
+so we have to manually write a more powerful one.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab7"></a><h2 class="section">Q: Give the default generate induction principle</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> (<a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree_ind"><span class="id" title="definition">nat_tree_ind</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <a id="P:216" class="idref" href="#P:216"><span class="id" title="binder">P</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>,                              <span class="comment">(*&nbsp;predicate&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> (<a id="n:217" class="idref" href="#n:217"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="l:218" class="idref" href="#l:218"><span class="id" title="binder">l</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>), <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> (<a class="idref" href="cpdt_notes.html#Nested_inductive_types.NNode"><span class="id" title="constructor">NNode</span></a> <a class="idref" href="cpdt_notes.html#n:217"><span class="id" title="variable">n</span></a> <a class="idref" href="cpdt_notes.html#l:218"><span class="id" title="variable">l</span></a>)<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a>   <span class="comment">(*&nbsp;NNode&nbsp;hypotesis&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="t:219" class="idref" href="#t:219"><span class="id" title="binder">t</span></a> : <a class="idref" href="cpdt_notes.html#Nested_inductive_types.nat_tree"><span class="id" title="inductive">nat_tree</span></a>, <a class="idref" href="cpdt_notes.html#P:216"><span class="id" title="variable">P</span></a> <a class="idref" href="cpdt_notes.html#t:219"><span class="id" title="variable">t</span></a>                             <span class="comment">(*&nbsp;final&nbsp;goal&nbsp;*)</span><br/>
+).<br/>
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab8"></a><h2 class="section">Q:</h2>
+              </div><details><summary>Answer</summary><div class="doc"> 
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+              </div> </details> <div class="doc">                 </div> </details> <div class="doc">                 </div> </details> <div class="doc">                 </div> </details> <div class="doc">                 </div> </details> <div class="doc">                 </div> </details> <div class="doc">  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#Nested_inductive_types"><span class="id" title="module">Nested_inductive_types</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab9"></a><h1 class="section">3.9 - Manual Proofs about Constructors</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+  What are True and False ?
+
+<div class="paragraph"> </div>
+
+  &gt; They are logical propositions ?
+
+<div class="paragraph"> </div>
+
+  Okay, what are logicial propositions concretely ?
+
+<div class="paragraph"> </div>
+
+  &gt; They are types (whose inhabitants are the proofs for those propositions)
+  &gt; They are values (of type Prop)
+
+<div class="paragraph"> </div>
+
+  What's so special about Prop / Set / Type ?
+  Why can't we define True as before but with : Set instead of : Prop ?
+
+<div class="paragraph"> </div>
+
+  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="toProp" class="idref" href="#toProp"><span class="id" title="definition">toProp</span></a> (<a id="b:220" class="idref" href="#b:220"><span class="id" title="binder">b</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>) := <span class="id" title="keyword">if</span> <a class="idref" href="cpdt_notes.html#b:220"><span class="id" title="variable">b</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#True"><span class="id" title="inductive">True</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="true_neq_false" class="idref" href="#true_neq_false"><span class="id" title="lemma">true_neq_false</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#True"><span class="id" title="inductive">True</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">≠</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Replace&nbsp;True&nbsp;(resp&nbsp;False)&nbsp;with&nbsp;"toProp&nbsp;true"&nbsp;(resp&nbsp;false)&nbsp;*)</span><br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Ht</span> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#True"><span class="id" title="inductive">True</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="cpdt_notes.html#toProp"><span class="id" title="definition">toProp</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>). { <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hf</span> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="cpdt_notes.html#toProp"><span class="id" title="definition">toProp</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>). { <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Ht</span> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hf</span> <span class="id" title="tactic">in</span> ×.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Ht</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#I"><span class="id" title="constructor">I</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab10"></a><h1 class="section">4.0 - Inductive Predicates</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab11"></a><h2 class="section">Q: Recall definition of <span class="inlinecode"><span class="id" title="var">unit</span></span> and <span class="inlinecode"><span class="id" title="var">True</span></span>, and fundamental difference ?</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <a id="my_unit" class="idref" href="#my_unit"><span class="id" title="definition, inductive"><span id="my_unit_rect" class="id"><span id="my_unit_ind" class="id"><span id="my_unit_rec" class="id"><span id="my_unit_sind" class="id">my_unit</span></span></span></span></span></a> : <span class="id" title="keyword">Set</span> := <a id="my_tt" class="idref" href="#my_tt"><span class="id" title="constructor">my_tt</span></a> : <a class="idref" href="cpdt_notes.html#my_unit:221"><span class="id" title="inductive">my_unit</span></a>.<br/>
+<span class="id" title="keyword">Inductive</span> <a id="my_True" class="idref" href="#my_True"><span class="id" title="definition, inductive"><span id="my_True_rect" class="id"><span id="my_True_ind" class="id"><span id="my_True_rec" class="id"><span id="my_True_sind" class="id">my_True</span></span></span></span></span></a> : <span class="id" title="keyword">Prop</span> := <a id="my_I" class="idref" href="#my_I"><span class="id" title="constructor">my_I</span></a> : <a class="idref" href="cpdt_notes.html#my_True:223"><span class="id" title="inductive">my_True</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">my_unit</span>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">unit</span>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">my_True</span>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">True</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The differneces are :
+<ul class="doclist">
+<li> name (my_unit vs my_True), detail
+
+</li>
+<li> constructor name (tt vs I), detail
+
+</li>
+<li> Kind : Set vs Prop, that is the main difference.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab12"></a><h2 class="section">Q: Why not merging the two into 1 single type ?</h2>
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Main argument : Proof irrelevance
+  All functions <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">Q</span></span> are not created equal, but all proof of proposition <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">Q</span></span> are.
+
+</li>
+<li> Plus some other arguments on compilation efficiency
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab13"></a><h2 class="section">Q: Goal of this chapter ?</h2>
+
+<div class="paragraph"> </div>
+
+See how to define predicates with inductive definitions.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab14"></a><h1 class="section">4.1 - Propositional Logic</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="Propositional" class="idref" href="#Propositional"><span class="id" title="section">Propositional</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="Propositional.P" class="idref" href="#Propositional.P"><span class="id" title="variable">P</span></a> <a id="Propositional.Q" class="idref" href="#Propositional.Q"><span class="id" title="variable">Q</span></a> <a id="Propositional.R" class="idref" href="#Propositional.R"><span class="id" title="variable">R</span></a> : <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="ex_falso_example" class="idref" href="#ex_falso_example"><span class="id" title="lemma">ex_falso_example</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> 2 <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> 2 <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 5.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">HF</span>. <span class="id" title="var">exfalso</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">HF</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab15"></a><h2 class="section">Q: How to avoid the boilerplate of dealing with and/or/not ?</h2>
+
+  e.g. Prove <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode">∨</span> <span class="inlinecode"><span class="id" title="var">Q</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">Q</span></span> <span class="inlinecode">∨</span> <span class="inlinecode"><span class="id" title="var">P</span></span> without manual use of <span class="inlinecode"><span class="id" title="tactic">left</span></span>, <span class="inlinecode"><span class="id" title="tactic">right</span></span>, etc.
+  
+<div class="paragraph"> </div>
+
+ <span class="inlinecode"><span class="id" title="tactic">tauto</span></span> to the rescue ! Complete decision procedure for constructive propositional logic. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="pq_qp" class="idref" href="#pq_qp"><span class="id" title="lemma">pq_qp</span></a> : <a class="idref" href="cpdt_notes.html#Propositional.P"><span class="id" title="variable">P</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="cpdt_notes.html#Propositional.Q"><span class="id" title="variable">Q</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#Propositional.Q"><span class="id" title="variable">Q</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="cpdt_notes.html#Propositional.P"><span class="id" title="variable">P</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">tauto</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab16"></a><h2 class="section">Q: What if <span class="inlinecode"><span class="id" title="tactic">tauto</span></span> fails because of some missing hypothesis ?</h2>
+
+<div class="paragraph"> </div>
+
+ Use <span class="inlinecode"><span class="id" title="tactic">intuition</span></span> instead, it will leave us the remaining bits to prove.
+  
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="arith_common" class="idref" href="#arith_common"><span class="id" title="lemma">arith_common</span></a> : <span class="id" title="keyword">∀</span> <a id="l1:231" class="idref" href="#l1:231"><span class="id" title="binder">l1</span></a> <a id="l2:232" class="idref" href="#l2:232"><span class="id" title="binder">l2</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:231"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:232"><span class="id" title="variable">l2</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:231"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:232"><span class="id" title="variable">l2</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 6<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> (<a class="idref" href="cpdt_notes.html#l1:231"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bc347c51eaf667706ae54503b26d52c6"><span class="id" title="notation">++</span></a> <a class="idref" href="cpdt_notes.html#l2:232"><span class="id" title="variable">l2</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 6 <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:231"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:232"><span class="id" title="variable">l2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intuition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">length_app</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intuition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;--------------------------------------------------------------------------------&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab17"></a><h2 class="section">Q: Common clean way to rewrite the above proof ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+  The <span class="inlinecode"><span class="id" title="tactic">intuition</span></span> tactic could work if it knew about <span class="inlinecode"><span class="id" title="var">length_app</span></span> for rewrites.
+
+<div class="paragraph"> </div>
+
+  First give the rewrite hint, then call <span class="inlinecode"><span class="id" title="var">crush</span></span>, which calls <span class="inlinecode"><span class="id" title="tactic">intuition</span></span> actually.
+  
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="arith_common_v2" class="idref" href="#arith_common_v2"><span class="id" title="lemma">arith_common_v2</span></a> : <span class="id" title="keyword">∀</span> <a id="l1:233" class="idref" href="#l1:233"><span class="id" title="binder">l1</span></a> <a id="l2:234" class="idref" href="#l2:234"><span class="id" title="binder">l2</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:233"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:234"><span class="id" title="variable">l2</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:233"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:234"><span class="id" title="variable">l2</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 6<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> (<a class="idref" href="cpdt_notes.html#l1:233"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bc347c51eaf667706ae54503b26d52c6"><span class="id" title="notation">++</span></a> <a class="idref" href="cpdt_notes.html#l2:234"><span class="id" title="variable">l2</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 6 <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l1:233"><span class="id" title="variable">l1</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="cpdt_notes.html#l2:234"><span class="id" title="variable">l2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Hint Rewrite</span> <span class="id" title="lemma">length_app</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#Propositional"><span class="id" title="section">Propositional</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;================================================================================&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab18"></a><h1 class="section">4.2 - What does it mean to be Constructive ?</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
