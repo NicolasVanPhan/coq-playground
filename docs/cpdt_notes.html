@@ -390,10 +390,373 @@ See how to define predicates with inductive definitions.
 </div>
 
 <div class="doc">
-<a id="lab18"></a><h1 class="section">4.2 - What does it mean to be Constructive ?</h1>
+<a id="lab18"></a><h1 class="section">4.5 - Recursive Predicates</h1>
 
 </div>
 <div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab19"></a><h2 class="section">Q: Define <span class="inlinecode"><span class="id" title="var">even</span></span> and manually prove <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">0</span>, <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="even" class="idref" href="#even"><span class="id" title="definition, inductive"><span id="even_ind" class="id"><span id="even_sind" class="id">even</span></span></span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span> :=<br/>
+| <a id="even_O" class="idref" href="#even_O"><span class="id" title="constructor">even_O</span></a> : <a class="idref" href="cpdt_notes.html#even:235"><span class="id" title="inductive">even</span></a> 0<br/>
+| <a id="even_SS" class="idref" href="#even_SS"><span class="id" title="constructor">even_SS</span></a> : <span class="id" title="keyword">∀</span> <a id="n:237" class="idref" href="#n:237"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even:235"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:237"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even:235"><span class="id" title="inductive">even</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="cpdt_notes.html#n:237"><span class="id" title="variable">n</span></a>))<br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_0" class="idref" href="#even_0"><span class="id" title="lemma">even_0</span></a> : <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 0.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_4" class="idref" href="#even_4"><span class="id" title="lemma">even_4</span></a> : <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 4.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">constructor</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab20"></a><h2 class="section">Q: Automate <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+When the problem is just about applying constructors, <span class="inlinecode"><span class="id" title="tactic">auto</span></span> can do the job easily.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Hint Constructors</span> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a>.<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_4'" class="idref" href="#even_4'"><span class="id" title="lemma">even_4'</span></a> : <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 4.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab21"></a><h2 class="section">Q: prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">1</span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="not_even_1" class="idref" href="#not_even_1"><span class="id" title="lemma">not_even_1</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 1.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="not_even_1'" class="idref" href="#not_even_1'"><span class="id" title="lemma">not_even_1'</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 1.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">inversion</span> 1.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab22"></a><h2 class="section">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">3</span>.</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Theorem</span> <a id="not_even_3" class="idref" href="#not_even_3"><span class="id" title="lemma">not_even_3</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> 3.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">inversion</span> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">inversion</span> <span class="id" title="var">H1</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab23"></a><h2 class="section">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even_plus</span></span>. Why not trivial ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+It's not trivial because the inductive case tries <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span>)</span>
+While we'd prefer a pattern like <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">P</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span>))</span>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_plus" class="idref" href="#even_plus"><span class="id" title="lemma">even_plus</span></a> : <span class="id" title="keyword">∀</span> <a id="n:238" class="idref" href="#n:238"><span class="id" title="binder">n</span></a> <a id="m:239" class="idref" href="#m:239"><span class="id" title="binder">m</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:238"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#m:239"><span class="id" title="variable">m</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> (<a class="idref" href="cpdt_notes.html#n:238"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#m:239"><span class="id" title="variable">m</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_plus_2" class="idref" href="#even_plus_2"><span class="id" title="lemma">even_plus_2</span></a> : <span class="id" title="keyword">∀</span> <a id="n:240" class="idref" href="#n:240"><span class="id" title="binder">n</span></a> <a id="m:241" class="idref" href="#m:241"><span class="id" title="binder">m</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:240"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#m:241"><span class="id" title="variable">m</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> (<a class="idref" href="cpdt_notes.html#n:240"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#m:241"><span class="id" title="variable">m</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">constructor</span>. <span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Or better, since <span class="inlinecode"><span class="id" title="var">H</span></span> appears as the first hypothesis, we can do : <span class="inlinecode"><span class="id" title="tactic">induction</span></span> <span class="inlinecode">1</span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_plus_final" class="idref" href="#even_plus_final"><span class="id" title="lemma">even_plus_final</span></a> : <span class="id" title="keyword">∀</span> <a id="n:242" class="idref" href="#n:242"><span class="id" title="binder">n</span></a> <a id="m:243" class="idref" href="#m:243"><span class="id" title="binder">m</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:242"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#m:243"><span class="id" title="variable">m</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> (<a class="idref" href="cpdt_notes.html#n:242"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#m:243"><span class="id" title="variable">m</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> 1; <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab24"></a><h2 class="section">Q: Lesson learned ? Proving <span class="inlinecode"><span class="id" title="var">even_plus</span></span>.</h2>
+
+<div class="paragraph"> </div>
+
+ Instead of <span class="inlinecode"><span class="id" title="tactic">induction</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span>, use <span class="inlinecode"><span class="id" title="tactic">induction</span></span> <span class="inlinecode">(<span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span>)</span>.
+    It's called *rule induction* and very handy.
+
+<div class="paragraph"> </div>
+
+    Instead of pattern-matching over how <span class="inlinecode"><span class="id" title="var">n</span></span> was constructed.
+    (with induction step linkin <span class="inlinecode"><span class="id" title="var">n</span></span> with <span class="inlinecode"><span class="id" title="var">n</span>+1</span>, not interesting.)
+    We pattern-match over how <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> was constructed.
+    (with induction step linking <span class="inlinecode"><span class="id" title="var">n</span></span> with <span class="inlinecode"><span class="id" title="var">n</span>+2</span>, more fruitful.)
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab25"></a><h2 class="section">Q: Now prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2*<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span></h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+We could try rule induction like before.
+But with recursive predicates, <span class="inlinecode"><span class="id" title="tactic">induction</span></span> is weird sometimes.
+If we try, we get stuck with empty hypotheses.
+It's related to how <span class="inlinecode"><span class="id" title="tactic">induction</span></span> replaces <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> with a fresh variable internally.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="even_contra" class="idref" href="#even_contra"><span class="id" title="lemma">even_contra</span></a> : <span class="id" title="keyword">∀</span> <a id="n:244" class="idref" href="#n:244"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#n:244"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#n:244"><span class="id" title="variable">n</span></a>)) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra_1" class="idref" href="#even_contra_1"><span class="id" title="lemma">even_contra_1</span></a> : <span class="id" title="keyword">∀</span> <a id="n:245" class="idref" href="#n:245"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:245"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="x:246" class="idref" href="#x:246"><span class="id" title="binder">x</span></a>, <a class="idref" href="cpdt_notes.html#n:245"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#x:246"><span class="id" title="variable">x</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#x:246"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="tactic">dependent</span> <span class="id" title="var">x</span>. &nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">x</span>; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">Nat.add_succ_r</span> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">IHeven</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">IHeven</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We get stuck without <span class="inlinecode"><span class="id" title="tactic">generalize</span></span> <span class="inlinecode"><span class="id" title="tactic">dependent</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span>,
+but once we generalize <span class="inlinecode"><span class="id" title="var">x</span></span>, the rest is just about rewrites and applies.
+The two main parts are :
+<ul class="doclist">
+<li> rule induction
+
+</li>
+<li> removing the cases where <span class="inlinecode"><span class="id" title="var">n</span></span> or <span class="inlinecode"><span class="id" title="var">x</span></span> are zero (hence the <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>s)
+
+</li>
+<li> Rewrite <span class="inlinecode"><span class="id" title="var">_</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">_</span></span>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Hence a simplified version of our lemma below
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra_lemma" class="idref" href="#even_contra_lemma"><span class="id" title="lemma">even_contra_lemma</span></a> : <span class="id" title="keyword">∀</span> <a id="n:247" class="idref" href="#n:247"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:247"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="x:248" class="idref" href="#x:248"><span class="id" title="binder">x</span></a>, <a class="idref" href="cpdt_notes.html#n:247"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#x:248"><span class="id" title="variable">x</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#x:248"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Rewrite</span> <span class="id" title="lemma">Nat.add_succ_r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> 1; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">x</span>; <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Next trick : instead of using introduced variable, which is unstable and error-prome
+better pattern-match on the goal
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra_lemma_final" class="idref" href="#even_contra_lemma_final"><span class="id" title="lemma">even_contra_lemma_final</span></a> : <span class="id" title="keyword">∀</span> <a id="n:249" class="idref" href="#n:249"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:249"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="x:250" class="idref" href="#x:250"><span class="id" title="binder">x</span></a>, <a class="idref" href="cpdt_notes.html#n:249"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#x:250"><span class="id" title="variable">x</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#x:250"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Rewrite</span> &lt;- <span class="id" title="lemma">Nat.add_succ_r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> 1; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| [ <span class="id" title="var">H</span> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> ?<span class="id" title="var">N</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> ?<span class="id" title="var">X</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> ?<span class="id" title="var">X</span> |- <span class="id" title="var">_</span> ] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">N</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now for the final theorem :
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra" class="idref" href="#even_contra"><span class="id" title="lemma">even_contra</span></a>: <span class="id" title="keyword">∀</span> <a id="n':251" class="idref" href="#n':251"><span class="id" title="binder">n'</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n':251"><span class="id" title="variable">n'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="n:252" class="idref" href="#n:252"><span class="id" title="binder">n</span></a>, <a class="idref" href="cpdt_notes.html#n':251"><span class="id" title="variable">n'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#n:252"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#n:252"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="cpdt_notes.html#even_contra_lemma_final"><span class="id" title="lemma">even_contra_lemma_final</span></a> <span class="id" title="var">H</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Or more simply, use <span class="inlinecode"><span class="id" title="tactic">eapply</span></span> instead of <span class="inlinecode"><span class="id" title="tactic">apply</span></span> so you let the prover
+find the right arguemnts for you.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra_final" class="idref" href="#even_contra_final"><span class="id" title="lemma">even_contra_final</span></a>: <span class="id" title="keyword">∀</span> <a id="n':253" class="idref" href="#n':253"><span class="id" title="binder">n'</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n':253"><span class="id" title="variable">n'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <a id="n:254" class="idref" href="#n:254"><span class="id" title="binder">n</span></a>, <a class="idref" href="cpdt_notes.html#n':253"><span class="id" title="variable">n'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#n:254"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#n:254"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eapply</span> <a class="idref" href="cpdt_notes.html#even_contra_lemma_final"><span class="id" title="lemma">even_contra_lemma_final</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab26"></a><h2 class="section">Q: Lesson learned ? Proving <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2<span class="id" title="var">n</span>+1)</span></h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Several tips :
+<ul class="doclist">
+<li> Rule induction is still a good advice.
+
+</li>
+<li> When <span class="inlinecode"><span class="id" title="tactic">induction</span></span> is lost, prove backwards through lemmas
+  mentioning the expressions of interest
+
+</li>
+<li> Search rewrites with <span class="inlinecode"><span class="id" title="keyword">SearchRewrite</span></span>
+
+</li>
+<li> Help <span class="inlinecode"><span class="id" title="var">crush</span></span> with the appropriate <span class="inlinecode"><span class="id" title="keyword">Hint</span></span> <span class="inlinecode"><span class="id" title="keyword">Rewrite</span></span> <span class="inlinecode"><span class="id" title="var">xxx</span></span>
+
+</li>
+<li> When <span class="inlinecode"><span class="id" title="tactic">apply</span></span> doesn't find the instances, try <span class="inlinecode"><span class="id" title="tactic">eapply</span></span> instead.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab27"></a><h2 class="section">Q: What problem occurs when introducing variables to soon ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Proof gets stuck because of of free variable that should be bound.
+e.g.
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>: <span class="id" title="var">nat</span>, <span class="id" title="var">even</span> <span class="id" title="var">n</span> → <span class="id" title="var">n</span> = <span class="id" title="var">S</span> (<span class="id" title="var">x</span> + <span class="id" title="var">x</span>) → <span class="id" title="var">False</span>.
+<div class="paragraph"> </div>
+
+</span>Introducing <span class="inlinecode"><span class="id" title="var">x</span></span> too soon will specialize it before doing the induction.
+So we'll want to <span class="inlinecode"><span class="id" title="tactic">generalize</span></span> it before calling <span class="inlinecode"><span class="id" title="tactic">induction</span></span>.
+We'll have a stronger goal but a stronger inductive hypothesis,
+which in genenral works better.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="even_contra_too_soon" class="idref" href="#even_contra_too_soon"><span class="id" title="lemma">even_contra_too_soon</span></a> : <span class="id" title="keyword">∀</span> <a id="n:255" class="idref" href="#n:255"><span class="id" title="binder">n</span></a> <a id="x:256" class="idref" href="#x:256"><span class="id" title="binder">x</span></a>: <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>, <a class="idref" href="cpdt_notes.html#even"><span class="id" title="inductive">even</span></a> <a class="idref" href="cpdt_notes.html#n:255"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#n:255"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="cpdt_notes.html#x:256"><span class="id" title="variable">x</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="cpdt_notes.html#x:256"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Rewrite</span> &lt;- <span class="id" title="lemma">Nat.add_succ_r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="tactic">dependent</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| [ <span class="id" title="var">H</span> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> ?<span class="id" title="var">N</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> ?<span class="id" title="var">X</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> ?<span class="id" title="var">X</span> |- <span class="id" title="var">_</span> ] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">N</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
 </div>

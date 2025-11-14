@@ -1,13 +1,13 @@
 # -------- Makefile (multi-file Coq + docs) --------
 
 # Tools
-COQC      ?= coqc
-COQDOC    ?= coqdoc
+COQC      ?= rocq c
+COQDOC    ?= rocq doc
 COQDEP    ?= coqdep
 
 # Flags
 COQFLAGS  ?= -q
-COQDOCFLAGS ?= --html --utf8 --toc
+COQDOCFLAGS ?= --html --utf8 --toc --no-index
 
 # Sources (all .v in this directory; or set explicitly: VFILES = a.v b.v ...)
 VFILES    := $(wildcard *.v)
