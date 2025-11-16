@@ -1166,3 +1166,177 @@ Proof.
   end; crush.
 Qed.
 
+(* ================================================================================ *)
+(** * 5 - Infinite Data and Proofs *)
+
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: What will go wrong if we can define non-terminating functions ? *)
+
+(**
+- You could define a proof of [False], breaking the logic.
+- Tactics evaluating functions, like [reflexivity], could hang forever.
+- Rocq couldn't determine whether the functions define would terminate
+  (as it would be equivalent to the Halting problem, undecidable)
+*)
+
+(** An example of proof of false we could build in that case : *)
+Fail Fixpoint bad (u : unit) : False := bad u.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: So how can we play with infinite lazy structures in Rocq ? *)
+
+(** With *coinductive types*, the subject of this chapter. *)
+
+(* ================================================================================ *)
+(** * 5.1 - Computing with Infinite Data *)
+
+Section Stream.
+  Variable A : Type.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Define streams (infinite lists). *)
+
+  CoInductive stream : Type :=
+  | Cons : A -> stream -> stream
+  .
+End Stream.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Define the stream of zeroes. *)
+
+CoFixpoint zeroes : stream nat := Cons 0 zeroes.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Define the stream of alternating true/false. *)
+
+(** A first tentative : *)
+
+CoFixpoint alt_true_false (b : bool) : stream bool := 
+  Cons b (alt_true_false (negb b)).
+
+(** The problem is the input boolean [b],
+    the idea of an infinite alternating list shouldn't ask for a boolean value.
+    It means [alt_true_false true] and [alt_true_false false] should be the same object.
+    So the boolean shouldn't be required at all.
+
+    Below definition solves this problem. *)
+
+CoFixpoint true_false : stream bool := Cons true false_true
+with       false_true : stream bool := Cons false true_false.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Write an [approx] function to convert streams to lists. *)
+
+
+Fixpoint approx (A : Type) (s : stream A) (n : nat) : list A :=
+  match n with
+  | O => nil
+  | S n' => (
+      match s with
+      | Cons h t => h :: (approx t n')
+      end
+  )
+  end.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Sanity-check your definitions with some examples. *)
+
+Eval simpl in (approx zeroes 10).
+(*
+     = 0 :: 0 :: 0 :: 0 :: 0 :: 0 :: 0 :: 0 :: 0 :: 0 :: nil
+     : list nat
+*)
+
+Eval simpl in (approx true_false 5).
+Eval simpl in (approx false_true 5).
+Eval simpl in (approx false_true 1).
+Eval simpl in (approx false_true 0).
+
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Compare [Fixpoint] and [CoFixpoint]. Restrictions of both ? *)
+
+(**
+[Fixpoint] _consumes_ values of inductive types,
+and has restriction on its argument (which must decrease).
+[CoFixpoint] _produces_ values of coinductive types,
+and has restrictions on its return value (which must increase).
+
+Below are dual example of forbidden looping fixpoint and cofixpoint.
+- [loop] is forbidden because its argument doesn't decrease.
+- [coloop] is forbidden because its return value doesn't increase.
+
+*)
+
+Fail Fixpoint loop (u : unit) : unit := loop u.
+
+Fail CoFixpoint coloop (s : stream unit) : stream unit := coloop s.
+
+(** If [coloop] weren't guarded, our [approx] function could have run forever. *)
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Write a [map] function over [stream]s.  *)
+
+Section stream_map.
+  Variables A B : Type.
+
+  CoFixpoint map (f : A -> B) (s : stream A) : stream B :=
+    match s with
+    | Cons h t => Cons (f h) (map f t)
+    end.
+End stream_map.
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: Example of classic function that does have its dual ? *)
+
+(** The [filter] function can't have a cofixpoint dual.
+    Indeed, if the filter rejects every element in the stream,
+    it cannot satisfy the guardedness condition.
+    Running [filter] with such an all-rejecting filter will hang forever. *)
+
+(* -------------------------------------------------------------------------------- *)
+(** **           Q: More subtle example violating guardedness condition ? *)
+
+Section interleave.
+  Variables A : Type.
+
+  CoFixpoint interleave (s1 s2 : stream A) : stream A :=
+    match s1, s2 with
+    | Cons h1 t1, Cons h2 t2 => Cons h1 (Cons h2 (interleave t1 t2))
+    end.
+End interleave.
+
+Section map'.
+  Variables A B : Type.
+  Variables f : A -> B.
+
+  Fail CoFixpoint map' (s : stream A) : stream B :=
+    match s with
+    | Cons h t => interleave (Cons (f h) (map' t)) (Cons (f h) (map' t))
+    end.
+End map'.
+
+(** Rocq will reject definitions when it can't ensure the _productivity_ condition. *)
+
+Definition tail' (s : stream nat) : stream nat :=
+  match s with
+  | Cons _ t => t
+  end.
+
+Fail CoFixpoint bad : stream nat := tail' (Cons 0 bad).
+
+(** Here the return value doesn't grow, because the additional constructor
+    is then removed by the sneaky [tail'] function, so the net progress is zero.
+    In that case, we would have just defined an infinite loop, breaking Rocq.
+
+    To ensure the return value grows,  Rocq not only demands a constructor,
+    but demands that everything touching the return value is harmless (not shrinking).
+    So functions are forbidden. Only constructors, and [fun], [match] blocs.
+
+    > No shrinking stuffs !
+
+    *)
+
+
+Check 0.

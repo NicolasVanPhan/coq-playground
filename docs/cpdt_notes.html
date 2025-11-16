@@ -760,6 +760,320 @@ which in genenral works better.
 
 <br/>
 </div>
+
+<div class="doc">
+<a id="lab28"></a><h1 class="section">5 - Infinite Data and Proofs</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab29"></a><h2 class="section">Q: What will go wrong if we can define non-terminating functions ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> You could define a proof of <span class="inlinecode"><span class="id" title="var">False</span></span>, breaking the logic.
+
+</li>
+<li> Tactics evaluating functions, like <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>, could hang forever.
+
+</li>
+<li> Rocq couldn't determine whether the functions define would terminate
+  (as it would be equivalent to the Halting problem, undecidable)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+ An example of proof of false we could build in that case : 
+</div>
+<div class="code">
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">Fixpoint</span> <a id="bad" class="idref" href="#bad"><span class="id" title="definition">bad</span></a> (<a id="u:257" class="idref" href="#u:257"><span class="id" title="binder">u</span></a> : <a class="idref" href="cpdt_notes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> := <a class="idref" href="cpdt_notes.html#bad:258"><span class="id" title="definition">bad</span></a> <a class="idref" href="cpdt_notes.html#u:257"><span class="id" title="variable">u</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab30"></a><h2 class="section">Q: So how can we play with infinite lazy structures in Rocq ?</h2>
+
+<div class="paragraph"> </div>
+
+ With *coinductive types*, the subject of this chapter. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab31"></a><h1 class="section">5.1 - Computing with Infinite Data</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="Stream" class="idref" href="#Stream"><span class="id" title="section">Stream</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="Stream.A" class="idref" href="#Stream.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab32"></a><h2 class="section">Q: Define streams (infinite lists).</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoInductive</span> <a id="stream" class="idref" href="#stream"><span class="id" title="inductive">stream</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <a id="Cons" class="idref" href="#Cons"><span class="id" title="constructor">Cons</span></a> : <a class="idref" href="cpdt_notes.html#Stream.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#stream:261"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#stream:261"><span class="id" title="inductive">stream</span></a><br/>
+&nbsp;&nbsp;.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#Stream"><span class="id" title="section">Stream</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab33"></a><h2 class="section">Q: Define the stream of zeroes.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="zeroes" class="idref" href="#zeroes"><span class="id" title="definition">zeroes</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> 0 <a class="idref" href="cpdt_notes.html#zeroes:263"><span class="id" title="definition">zeroes</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab34"></a><h2 class="section">Q: Define the stream of alternating true/false.</h2>
+
+<div class="paragraph"> </div>
+
+ A first tentative : 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="alt_true_false" class="idref" href="#alt_true_false"><span class="id" title="definition">alt_true_false</span></a> (<a id="b:264" class="idref" href="#b:264"><span class="id" title="binder">b</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <br/>
+&nbsp;&nbsp;<a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="cpdt_notes.html#b:264"><span class="id" title="variable">b</span></a> (<a class="idref" href="cpdt_notes.html#alt_true_false:265"><span class="id" title="definition">alt_true_false</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#negb"><span class="id" title="definition">negb</span></a> <a class="idref" href="cpdt_notes.html#b:264"><span class="id" title="variable">b</span></a>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The problem is the input boolean <span class="inlinecode"><span class="id" title="var">b</span></span>,
+    the idea of an infinite alternating list shouldn't ask for a boolean value.
+    It means <span class="inlinecode"><span class="id" title="var">alt_true_false</span></span> <span class="inlinecode"><span class="id" title="var">true</span></span> and <span class="inlinecode"><span class="id" title="var">alt_true_false</span></span> <span class="inlinecode"><span class="id" title="var">false</span></span> should be the same object.
+    So the boolean shouldn't be required at all.
+
+<div class="paragraph"> </div>
+
+    Below definition solves this problem. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="true_false" class="idref" href="#true_false"><span class="id" title="definition">true_false</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="cpdt_notes.html#false_true:267"><span class="id" title="definition">false_true</span></a><br/>
+<span class="id" title="keyword">with</span>       <a id="false_true" class="idref" href="#false_true"><span class="id" title="definition">false_true</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="cpdt_notes.html#true_false:266"><span class="id" title="definition">true_false</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab35"></a><h2 class="section">Q: Write an <span class="inlinecode"><span class="id" title="var">approx</span></span> function to convert streams to lists.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="approx" class="idref" href="#approx"><span class="id" title="definition">approx</span></a> (<a id="A:268" class="idref" href="#A:268"><span class="id" title="binder">A</span></a> : <span class="id" title="keyword">Type</span>) (<a id="s:269" class="idref" href="#s:269"><span class="id" title="binder">s</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#A:268"><span class="id" title="variable">A</span></a>) (<a id="n:270" class="idref" href="#n:270"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cpdt_notes.html#A:268"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#n:270"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">n'</span> ⇒ (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#s:269"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <span class="id" title="var">h</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="cpdt_notes.html#approx:271"><span class="id" title="definition">approx</span></a> <span class="id" title="var">t</span> <span class="id" title="var">n'</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab36"></a><h2 class="section">Q: Sanity-check your definitions with some examples.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="cpdt_notes.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="cpdt_notes.html#zeroes"><span class="id" title="definition">zeroes</span></a> 10).<br/>
+
+<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="cpdt_notes.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="cpdt_notes.html#true_false"><span class="id" title="definition">true_false</span></a> 5).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="cpdt_notes.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="cpdt_notes.html#false_true"><span class="id" title="definition">false_true</span></a> 5).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="cpdt_notes.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="cpdt_notes.html#false_true"><span class="id" title="definition">false_true</span></a> 1).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="cpdt_notes.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="cpdt_notes.html#false_true"><span class="id" title="definition">false_true</span></a> 0).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab37"></a><h2 class="section">Q: Compare <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> and <span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span>. Restrictions of both ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> <i>consumes</i> values of inductive types,
+and has restriction on its argument (which must decrease).
+<span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span> <i>produces</i> values of coinductive types,
+and has restrictions on its return value (which must increase).
+
+<div class="paragraph"> </div>
+
+Below are dual example of forbidden looping fixpoint and cofixpoint.
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">loop</span></span> is forbidden because its argument doesn't decrease.
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">coloop</span></span> is forbidden because its return value doesn't increase.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">Fixpoint</span> <a id="loop" class="idref" href="#loop"><span class="id" title="definition">loop</span></a> (<a id="u:274" class="idref" href="#u:274"><span class="id" title="binder">u</span></a> : <a class="idref" href="cpdt_notes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="cpdt_notes.html#unit"><span class="id" title="inductive">unit</span></a> := <a class="idref" href="cpdt_notes.html#loop:275"><span class="id" title="definition">loop</span></a> <a class="idref" href="cpdt_notes.html#u:274"><span class="id" title="variable">u</span></a>.<br/>
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="coloop" class="idref" href="#coloop"><span class="id" title="definition">coloop</span></a> (<a id="s:276" class="idref" href="#s:276"><span class="id" title="binder">s</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#unit"><span class="id" title="inductive">unit</span></a> := <a class="idref" href="cpdt_notes.html#coloop:277"><span class="id" title="definition">coloop</span></a> <a class="idref" href="cpdt_notes.html#s:276"><span class="id" title="variable">s</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+If <span class="inlinecode"><span class="id" title="var">coloop</span></span> weren't guarded, our <span class="inlinecode"><span class="id" title="var">approx</span></span> function could have run forever. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab38"></a><h2 class="section">Q: Write a <span class="inlinecode"><span class="id" title="var">map</span></span> function over <span class="inlinecode"><span class="id" title="var">stream</span></span>s.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_map" class="idref" href="#stream_map"><span class="id" title="section">stream_map</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_map.A" class="idref" href="#stream_map.A"><span class="id" title="variable">A</span></a> <a id="stream_map.B" class="idref" href="#stream_map.B"><span class="id" title="variable">B</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoFixpoint</span> <a id="map" class="idref" href="#map"><span class="id" title="definition">map</span></a> (<a id="f:282" class="idref" href="#f:282"><span class="id" title="binder">f</span></a> : <a class="idref" href="cpdt_notes.html#stream_map.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#stream_map.B"><span class="id" title="variable">B</span></a>) (<a id="s:283" class="idref" href="#s:283"><span class="id" title="binder">s</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#stream_map.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#stream_map.B"><span class="id" title="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#s:283"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="cpdt_notes.html#f:282"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="cpdt_notes.html#map:284"><span class="id" title="definition">map</span></a> <a class="idref" href="cpdt_notes.html#f:282"><span class="id" title="variable">f</span></a> <span class="id" title="var">t</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#stream_map"><span class="id" title="section">stream_map</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab39"></a><h2 class="section">Q: Example of classic function that does have its dual ?</h2>
+
+<div class="paragraph"> </div>
+
+ The <span class="inlinecode"><span class="id" title="var">filter</span></span> function can't have a cofixpoint dual.
+    Indeed, if the filter rejects every element in the stream,
+    it cannot satisfy the guardedness condition.
+    Running <span class="inlinecode"><span class="id" title="var">filter</span></span> with such an all-rejecting filter will hang forever. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab40"></a><h2 class="section">Q: More subtle example violating guardedness condition ?</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="interleave" class="idref" href="#interleave"><span class="id" title="section">interleave</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="interleave.A" class="idref" href="#interleave.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoFixpoint</span> <a id="interleave" class="idref" href="#interleave"><span class="id" title="definition">interleave</span></a> (<a id="s1:288" class="idref" href="#s1:288"><span class="id" title="binder">s1</span></a> <a id="s2:289" class="idref" href="#s2:289"><span class="id" title="binder">s2</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#interleave.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#interleave.A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#s1:288"><span class="id" title="variable">s1</span></a>, <a class="idref" href="cpdt_notes.html#s2:289"><span class="id" title="variable">s2</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h1</span> <span class="id" title="var">t1</span>, <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h2</span> <span class="id" title="var">t2</span> ⇒ <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h1</span> (<a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h2</span> (<a class="idref" href="cpdt_notes.html#interleave:290"><span class="id" title="definition">interleave</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#interleave"><span class="id" title="section">interleave</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="map'" class="idref" href="#map'"><span class="id" title="section">map'</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="map'.A" class="idref" href="#map'.A"><span class="id" title="variable">A</span></a> <a id="map'.B" class="idref" href="#map'.B"><span class="id" title="variable">B</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="map'.f" class="idref" href="#map'.f"><span class="id" title="variable">f</span></a> : <a class="idref" href="cpdt_notes.html#map'.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="cpdt_notes.html#map'.B"><span class="id" title="variable">B</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="map'" class="idref" href="#map'"><span class="id" title="definition">map'</span></a> (<a id="s:299" class="idref" href="#s:299"><span class="id" title="binder">s</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#map'.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="cpdt_notes.html#map'.B"><span class="id" title="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#s:299"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="cpdt_notes.html#interleave"><span class="id" title="definition">interleave</span></a> (<a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="cpdt_notes.html#map'.f"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="cpdt_notes.html#map':300"><span class="id" title="definition">map'</span></a> <span class="id" title="var">t</span>)) (<a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="cpdt_notes.html#map'.f"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="cpdt_notes.html#map':300"><span class="id" title="definition">map'</span></a> <span class="id" title="var">t</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cpdt_notes.html#map'"><span class="id" title="section">map'</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Rocq will reject definitions when it can't ensure the <i>productivity</i> condition. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="tail'" class="idref" href="#tail'"><span class="id" title="definition">tail'</span></a> (<a id="s:302" class="idref" href="#s:302"><span class="id" title="binder">s</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="cpdt_notes.html#s:302"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t</span> ⇒ <span class="id" title="var">t</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="bad" class="idref" href="#bad"><span class="id" title="definition">bad</span></a> : <a class="idref" href="cpdt_notes.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="cpdt_notes.html#tail'"><span class="id" title="definition">tail'</span></a> (<a class="idref" href="cpdt_notes.html#Cons"><span class="id" title="constructor">Cons</span></a> 0 <a class="idref" href="cpdt_notes.html#bad:304"><span class="id" title="definition">bad</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here the return value doesn't grow, because the additional constructor
+    is then removed by the sneaky <span class="inlinecode"><span class="id" title="var">tail'</span></span> function, so the net progress is zero.
+    In that case, we would have just defined an infinite loop, breaking Rocq.
+
+<div class="paragraph"> </div>
+
+    To ensure the return value grows,  Rocq not only demands a constructor,
+    but demands that everything touching the return value is harmless (not shrinking).
+    So functions are forbidden. Only constructors, and <span class="inlinecode"><span class="id" title="keyword">fun</span></span>, <span class="inlinecode"><span class="id" title="keyword">match</span></span> blocs. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> 0.<br/>
+</div>
 <hr/>This page has been generated by <a href="http://rocq-prover.org/">coqdoc</a>
 </div>
 
