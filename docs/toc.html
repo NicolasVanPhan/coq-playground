@@ -17,142 +17,202 @@
 <div id="main">
 
 <div id="toc">
+<h2><a href="Chapter4.html">Library Chapter4</a></h2>
+<ul class="doclist">
+<li><a href="Chapter4.html#lab1">4.0 - Inductive Predicates</a>
+<ul class="doclist">
+<li><a href="Chapter4.html#lab2">Q: Recall definition of <span class="inlinecode"><span class="id" title="var">unit</span></span> and <span class="inlinecode"><span class="id" title="var">True</span></span>, and fundamental difference ?</a>
+
+</li>
+<li><a href="Chapter4.html#lab3">Q: Why not merging the two into 1 single type ?</a>
+
+</li>
+<li><a href="Chapter4.html#lab4">Q: Goal of this chapter ?</a>
+
+</li>
+</ul>
+
+</li>
+<li><a href="Chapter4.html#lab5">4.1 - Propositional Logic</a>
+<ul class="doclist">
+<li><a href="Chapter4.html#lab6">Q: How to avoid the boilerplate of dealing with and/or/not ?</a>
+
+</li>
+<li><a href="Chapter4.html#lab7">Q: What if <span class="inlinecode"><span class="id" title="tactic">tauto</span></span> fails because of some missing hypothesis ?</a>
+
+</li>
+<li><a href="Chapter4.html#lab8">Q: Common clean way to rewrite the above proof ?</a>
+
+</li>
+</ul>
+
+</li>
+<li><a href="Chapter4.html#lab9">4.5 - Recursive Predicates</a>
+<ul class="doclist">
+<li><a href="Chapter4.html#lab10">Q: Define <span class="inlinecode"><span class="id" title="var">even</span></span> and manually prove <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">0</span>, <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></a>
+
+</li>
+<li><a href="Chapter4.html#lab11">Q: Automate <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></a>
+
+</li>
+<li><a href="Chapter4.html#lab12">Q: prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">1</span></a>
+
+</li>
+<li><a href="Chapter4.html#lab13">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">3</span>.</a>
+
+</li>
+<li><a href="Chapter4.html#lab14">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even_plus</span></span>. Why not trivial ?</a>
+
+</li>
+<li><a href="Chapter4.html#lab15">Q: Lesson learned ? Proving <span class="inlinecode"><span class="id" title="var">even_plus</span></span>.</a>
+
+</li>
+<li><a href="Chapter4.html#lab16">Q: Now prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2*<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span></a>
+
+</li>
+<li><a href="Chapter4.html#lab17">Q: Lesson learned ? Proving <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2<span class="id" title="var">n</span>+1)</span></a>
+
+</li>
+<li><a href="Chapter4.html#lab18">Q: What problem occurs when introducing variables to soon ?</a>
+
+</li>
+</ul>
+
+</li>
+</ul>
+<h2><a href="Chapter5.html">Library Chapter5</a></h2>
+<ul class="doclist">
+<li><a href="Chapter5.html#lab19">5 - Infinite Data and Proofs</a>
+<ul class="doclist">
+<li><a href="Chapter5.html#lab20">Q: What will go wrong if we can define non-terminating functions ?</a>
+
+</li>
+<li><a href="Chapter5.html#lab21">Q: So how can we play with infinite lazy structures in Rocq ?</a>
+
+</li>
+</ul>
+
+</li>
+<li><a href="Chapter5.html#lab22">5.1 - Computing with Infinite Data</a>
+<ul class="doclist">
+<li><a href="Chapter5.html#lab23">Q: Define streams (infinite lists).</a>
+
+</li>
+<li><a href="Chapter5.html#lab24">Q: Define the stream of zeroes.</a>
+
+</li>
+<li><a href="Chapter5.html#lab25">Q: Define the stream of alternating true/false.</a>
+
+</li>
+<li><a href="Chapter5.html#lab26">Q: Write an <span class="inlinecode"><span class="id" title="var">approx</span></span> function to convert streams to lists.</a>
+
+</li>
+<li><a href="Chapter5.html#lab27">Q: Sanity-check your definitions with some examples.</a>
+
+</li>
+<li><a href="Chapter5.html#lab28">Q: Compare <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> and <span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span>. Restrictions of both ?</a>
+
+</li>
+<li><a href="Chapter5.html#lab29">Q: Write a <span class="inlinecode"><span class="id" title="var">map</span></span> function over <span class="inlinecode"><span class="id" title="var">stream</span></span>s.</a>
+
+</li>
+<li><a href="Chapter5.html#lab30">Q: Example of classic function that does have its dual ?</a>
+
+</li>
+<li><a href="Chapter5.html#lab31">Q: More subtle example violating guardedness condition ?</a>
+
+</li>
+</ul>
+
+</li>
+<li><a href="Chapter5.html#lab32">5.2 - Infinite Proofs</a>
+<ul class="doclist">
+<li><a href="Chapter5.html#lab33">Q: Give example of 2 equal streams, and prove them equal.</a>
+
+</li>
+<li><a href="Chapter5.html#lab34">Q: APARTE : Print and explain the generated proof term <span class="inlinecode"><span class="id" title="var">stream_a_eq_b_try2</span></span></a>
+
+</li>
+<li><a href="Chapter5.html#lab35">Q: Proof v2 : Define a coinduction principle</a>
+
+</li>
+<li><a href="Chapter5.html#lab36">Q: APARTE : Illustrate the 'copy/paste' from <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> to <span class="inlinecode"><span class="id" title="var">stream_eq_coind</span></span>.</a>
+
+</li>
+<li><a href="Chapter5.html#lab37">Q: Proof v3 : How to prove equality without defining any <span class="inlinecode"><span class="id" title="var">R</span></span> ?</a>
+
+</li>
+<li><a href="Chapter5.html#lab38">Q: Factorials : Define the stream of factorials</a>
+
+</li>
+<li><a href="Chapter5.html#lab39">Q: Factorials v1 : Prove them equal</a>
+
+</li>
+<li><a href="Chapter5.html#lab40">Q: Factorials v2 : Simpler proof of lemma</a>
+
+</li>
+</ul>
+
+</li>
+<li><a href="Chapter5.html#lab41">5.3 - Simple Modeling of non-terminating programs</a>
+<ul class="doclist">
+<li><a href="Chapter5.html#lab42">Q: Define a little language with :</a>
+
+</li>
+<li><a href="Chapter5.html#lab43">Q: Now, what object to define the evaluation of command, and why ?</a>
+
+</li>
+<li><a href="Chapter5.html#lab44">Q: Define a coinductive principle for the <span class="inlinecode"><span class="id" title="var">evalCmd</span></span> relation.</a>
+
+</li>
+<li><a href="Chapter5.html#lab45">Q: Now write a simple optimizing pass replacing <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">e</span></span> with <span class="inlinecode"><span class="id" title="var">e</span></span>.</a>
+
+</li>
+<li><a href="Chapter5.html#lab46">Q: Prove <span class="inlinecode"><span class="id" title="var">optExp</span></span> correct.</a>
+
+</li>
+<li><a href="Chapter5.html#lab47">Q: BONUS: Prove <span class="inlinecode"><span class="id" title="var">optCmd</span></span> correct (left unexplained in the book).</a>
+
+</li>
+</ul>
+
+</li>
+</ul>
 <h2><a href="cpdt_notes.html">Library cpdt_notes</a></h2>
 <ul class="doclist">
-<li><a href="cpdt_notes.html#lab1">3.8 - Nested Inductive Types</a>
+<li><a href="cpdt_notes.html#lab48">3.8 - Nested Inductive Types</a>
 <ul class="doclist">
-<li><a href="cpdt_notes.html#lab2">Q: Give an example of nested inductive type</a>
+<li><a href="cpdt_notes.html#lab49">Q: Give an example of nested inductive type</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab3">Q: Why is it called "nested" ?</a>
+<li><a href="cpdt_notes.html#lab50">Q: Why is it called "nested" ?</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab4">Q: What's the problem with it ?</a>
+<li><a href="cpdt_notes.html#lab51">Q: What's the problem with it ?</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab5">Q: Give an example of type definition violating the positivity rule</a>
+<li><a href="cpdt_notes.html#lab52">Q: Give an example of type definition violating the positivity rule</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab6">Q: What is the usual problem with nested inductive types ?</a>
+<li><a href="cpdt_notes.html#lab53">Q: What is the usual problem with nested inductive types ?</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab7">Q: Give the default generate induction principle</a>
+<li><a href="cpdt_notes.html#lab54">Q: Give the default generate induction principle</a>
 
 </li>
-<li><a href="cpdt_notes.html#lab8">Q:</a>
-
-</li>
-</ul>
-
-</li>
-<li><a href="cpdt_notes.html#lab9">3.9 - Manual Proofs about Constructors</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab10">4.0 - Inductive Predicates</a>
-<ul class="doclist">
-<li><a href="cpdt_notes.html#lab11">Q: Recall definition of <span class="inlinecode"><span class="id" title="var">unit</span></span> and <span class="inlinecode"><span class="id" title="var">True</span></span>, and fundamental difference ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab12">Q: Why not merging the two into 1 single type ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab13">Q: Goal of this chapter ?</a>
+<li><a href="cpdt_notes.html#lab55">Q:</a>
 
 </li>
 </ul>
 
 </li>
-<li><a href="cpdt_notes.html#lab14">4.1 - Propositional Logic</a>
-<ul class="doclist">
-<li><a href="cpdt_notes.html#lab15">Q: How to avoid the boilerplate of dealing with and/or/not ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab16">Q: What if <span class="inlinecode"><span class="id" title="tactic">tauto</span></span> fails because of some missing hypothesis ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab17">Q: Common clean way to rewrite the above proof ?</a>
+<li><a href="cpdt_notes.html#lab56">3.9 - Manual Proofs about Constructors</a>
 
 </li>
 </ul>
-
-</li>
-<li><a href="cpdt_notes.html#lab18">4.5 - Recursive Predicates</a>
-<ul class="doclist">
-<li><a href="cpdt_notes.html#lab19">Q: Define <span class="inlinecode"><span class="id" title="var">even</span></span> and manually prove <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">0</span>, <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></a>
-
-</li>
-<li><a href="cpdt_notes.html#lab20">Q: Automate <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">4</span></a>
-
-</li>
-<li><a href="cpdt_notes.html#lab21">Q: prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">1</span></a>
-
-</li>
-<li><a href="cpdt_notes.html#lab22">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">3</span>.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab23">Q: Prove <span class="inlinecode">¬<span class="id" title="var">even_plus</span></span>. Why not trivial ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab24">Q: Lesson learned ? Proving <span class="inlinecode"><span class="id" title="var">even_plus</span></span>.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab25">Q: Now prove <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2*<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span></a>
-
-</li>
-<li><a href="cpdt_notes.html#lab26">Q: Lesson learned ? Proving <span class="inlinecode">¬<span class="id" title="var">even</span></span> <span class="inlinecode">(2<span class="id" title="var">n</span>+1)</span></a>
-
-</li>
-<li><a href="cpdt_notes.html#lab27">Q: What problem occurs when introducing variables to soon ?</a>
-
-</li>
-</ul>
-
-</li>
-<li><a href="cpdt_notes.html#lab28">5 - Infinite Data and Proofs</a>
-<ul class="doclist">
-<li><a href="cpdt_notes.html#lab29">Q: What will go wrong if we can define non-terminating functions ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab30">Q: So how can we play with infinite lazy structures in Rocq ?</a>
-
-</li>
-</ul>
-
-</li>
-<li><a href="cpdt_notes.html#lab31">5.1 - Computing with Infinite Data</a>
-<ul class="doclist">
-<li><a href="cpdt_notes.html#lab32">Q: Define streams (infinite lists).</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab33">Q: Define the stream of zeroes.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab34">Q: Define the stream of alternating true/false.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab35">Q: Write an <span class="inlinecode"><span class="id" title="var">approx</span></span> function to convert streams to lists.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab36">Q: Sanity-check your definitions with some examples.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab37">Q: Compare <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> and <span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span>. Restrictions of both ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab38">Q: Write a <span class="inlinecode"><span class="id" title="var">map</span></span> function over <span class="inlinecode"><span class="id" title="var">stream</span></span>s.</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab39">Q: Example of classic function that does have its dual ?</a>
-
-</li>
-<li><a href="cpdt_notes.html#lab40">Q: More subtle example violating guardedness condition ?</a>
-
-</li>
-</ul>
-
-</li>
-</ul>
+<h2><a href="Mycrush.html">Library Mycrush</a></h2>
 <h2><a href="peano.html">Library peano</a></h2>
+<h2><a href="scratch.html">Library scratch</a></h2>
 </div>
 <hr/>This page has been generated by <a href="http://rocq-prover.org/">coqdoc</a>
 </div>

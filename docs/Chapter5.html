@@ -1,0 +1,1204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>Chapter5</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Chapter5</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="Mycrush.html#"><span class="id" title="library">Mycrush</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Bool</span> <span class="id" title="library">Arith</span> <span class="id" title="library">List</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Eqdep</span> <span class="id" title="library">List</span> <span class="id" title="library">Lia</span>.<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab19"></a><h1 class="section">5 - Infinite Data and Proofs</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab20"></a><h2 class="section">Q: What will go wrong if we can define non-terminating functions ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> You could define a proof of <span class="inlinecode"><span class="id" title="var">False</span></span>, breaking the logic.
+
+</li>
+<li> Tactics evaluating functions, like <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>, could hang forever.
+
+</li>
+<li> Rocq couldn't determine whether the functions define would terminate
+  (as it would be equivalent to the Halting problem, undecidable)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+ An example of proof of false we could build in that case : 
+</div>
+<div class="code">
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">Fixpoint</span> <a id="bad" class="idref" href="#bad"><span class="id" title="definition">bad</span></a> (<a id="u:1" class="idref" href="#u:1"><span class="id" title="binder">u</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> := <a class="idref" href="Chapter5.html#bad:2"><span class="id" title="definition">bad</span></a> <a class="idref" href="Chapter5.html#u:1"><span class="id" title="variable">u</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab21"></a><h2 class="section">Q: So how can we play with infinite lazy structures in Rocq ?</h2>
+
+<div class="paragraph"> </div>
+
+ With *coinductive types*, the subject of this chapter. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab22"></a><h1 class="section">5.1 - Computing with Infinite Data</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="Stream" class="idref" href="#Stream"><span class="id" title="section">Stream</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="Stream.A" class="idref" href="#Stream.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab23"></a><h2 class="section">Q: Define streams (infinite lists).</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoInductive</span> <a id="stream" class="idref" href="#stream"><span class="id" title="inductive">stream</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <a id="Cons" class="idref" href="#Cons"><span class="id" title="constructor">Cons</span></a> : <a class="idref" href="Chapter5.html#Stream.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream:5"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream:5"><span class="id" title="inductive">stream</span></a><br/>
+&nbsp;&nbsp;.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#Stream"><span class="id" title="section">Stream</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab24"></a><h2 class="section">Q: Define the stream of zeroes.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="zeroes" class="idref" href="#zeroes"><span class="id" title="definition">zeroes</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> 0 <a class="idref" href="Chapter5.html#zeroes:7"><span class="id" title="definition">zeroes</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab25"></a><h2 class="section">Q: Define the stream of alternating true/false.</h2>
+
+<div class="paragraph"> </div>
+
+ A first tentative : 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="alt_true_false" class="idref" href="#alt_true_false"><span class="id" title="definition">alt_true_false</span></a> (<a id="b:8" class="idref" href="#b:8"><span class="id" title="binder">b</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="Chapter5.html#b:8"><span class="id" title="variable">b</span></a> (<a class="idref" href="Chapter5.html#alt_true_false:9"><span class="id" title="definition">alt_true_false</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#negb"><span class="id" title="definition">negb</span></a> <a class="idref" href="Chapter5.html#b:8"><span class="id" title="variable">b</span></a>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The problem is the input boolean <span class="inlinecode"><span class="id" title="var">b</span></span>,
+    the idea of an infinite alternating list shouldn't ask for a boolean value.
+    It means <span class="inlinecode"><span class="id" title="var">alt_true_false</span></span> <span class="inlinecode"><span class="id" title="var">true</span></span> and <span class="inlinecode"><span class="id" title="var">alt_true_false</span></span> <span class="inlinecode"><span class="id" title="var">false</span></span> should be the same object.
+    So the boolean shouldn't be required at all.
+
+<div class="paragraph"> </div>
+
+    Below definition solves this problem. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="true_false" class="idref" href="#true_false"><span class="id" title="definition">true_false</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="Chapter5.html#false_true:11"><span class="id" title="definition">false_true</span></a><br/>
+<span class="id" title="keyword">with</span>       <a id="false_true" class="idref" href="#false_true"><span class="id" title="definition">false_true</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="Chapter5.html#true_false:10"><span class="id" title="definition">true_false</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab26"></a><h2 class="section">Q: Write an <span class="inlinecode"><span class="id" title="var">approx</span></span> function to convert streams to lists.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="approx" class="idref" href="#approx"><span class="id" title="definition">approx</span></a> (<a id="A:12" class="idref" href="#A:12"><span class="id" title="binder">A</span></a> : <span class="id" title="keyword">Type</span>) (<a id="s:13" class="idref" href="#s:13"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:12"><span class="id" title="variable">A</span></a>) (<a id="n:14" class="idref" href="#n:14"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="Chapter5.html#A:12"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#n:14"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">n'</span> ⇒ (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:13"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <span class="id" title="var">h</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#approx:15"><span class="id" title="definition">approx</span></a> <span class="id" title="var">t</span> <span class="id" title="var">n'</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab27"></a><h2 class="section">Q: Sanity-check your definitions with some examples.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#zeroes"><span class="id" title="definition">zeroes</span></a> 10).<br/>
+
+<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#true_false"><span class="id" title="definition">true_false</span></a> 5).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#false_true"><span class="id" title="definition">false_true</span></a> 5).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#false_true"><span class="id" title="definition">false_true</span></a> 1).<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> (<a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#false_true"><span class="id" title="definition">false_true</span></a> 0).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab28"></a><h2 class="section">Q: Compare <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> and <span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span>. Restrictions of both ?</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> <i>consumes</i> values of inductive types,
+and has restriction on its argument (which must decrease).
+<span class="inlinecode"><span class="id" title="keyword">CoFixpoint</span></span> <i>produces</i> values of coinductive types,
+and has restrictions on its return value (which must increase).
+
+<div class="paragraph"> </div>
+
+Below are dual example of forbidden looping fixpoint and cofixpoint.
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">loop</span></span> is forbidden because its argument doesn't decrease.
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">coloop</span></span> is forbidden because its return value doesn't increase.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">Fixpoint</span> <a id="loop" class="idref" href="#loop"><span class="id" title="definition">loop</span></a> (<a id="u:18" class="idref" href="#u:18"><span class="id" title="binder">u</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> := <a class="idref" href="Chapter5.html#loop:19"><span class="id" title="definition">loop</span></a> <a class="idref" href="Chapter5.html#u:18"><span class="id" title="variable">u</span></a>.<br/>
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="coloop" class="idref" href="#coloop"><span class="id" title="definition">coloop</span></a> (<a id="s:20" class="idref" href="#s:20"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> := <a class="idref" href="Chapter5.html#coloop:21"><span class="id" title="definition">coloop</span></a> <a class="idref" href="Chapter5.html#s:20"><span class="id" title="variable">s</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+If <span class="inlinecode"><span class="id" title="var">coloop</span></span> weren't guarded, our <span class="inlinecode"><span class="id" title="var">approx</span></span> function could have run forever. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab29"></a><h2 class="section">Q: Write a <span class="inlinecode"><span class="id" title="var">map</span></span> function over <span class="inlinecode"><span class="id" title="var">stream</span></span>s.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_map" class="idref" href="#stream_map"><span class="id" title="section">stream_map</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_map.A" class="idref" href="#stream_map.A"><span class="id" title="variable">A</span></a> <a id="stream_map.B" class="idref" href="#stream_map.B"><span class="id" title="variable">B</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoFixpoint</span> <a id="stream_map" class="idref" href="#stream_map"><span class="id" title="definition">stream_map</span></a> (<a id="f:26" class="idref" href="#f:26"><span class="id" title="binder">f</span></a> : <a class="idref" href="Chapter5.html#stream_map.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_map.B"><span class="id" title="variable">B</span></a>) (<a id="s:27" class="idref" href="#s:27"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_map.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_map.B"><span class="id" title="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:27"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="Chapter5.html#f:26"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="Chapter5.html#stream_map:28"><span class="id" title="definition">stream_map</span></a> <a class="idref" href="Chapter5.html#f:26"><span class="id" title="variable">f</span></a> <span class="id" title="var">t</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_map"><span class="id" title="section">stream_map</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab30"></a><h2 class="section">Q: Example of classic function that does have its dual ?</h2>
+
+<div class="paragraph"> </div>
+
+ The <span class="inlinecode"><span class="id" title="var">filter</span></span> function can't have a cofixpoint dual.
+    Indeed, if the filter rejects every element in the stream,
+    it cannot satisfy the guardedness condition.
+    Running <span class="inlinecode"><span class="id" title="var">filter</span></span> with such an all-rejecting filter will hang forever. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab31"></a><h2 class="section">Q: More subtle example violating guardedness condition ?</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="interleave" class="idref" href="#interleave"><span class="id" title="section">interleave</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="interleave.A" class="idref" href="#interleave.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoFixpoint</span> <a id="interleave" class="idref" href="#interleave"><span class="id" title="definition">interleave</span></a> (<a id="s1:32" class="idref" href="#s1:32"><span class="id" title="binder">s1</span></a> <a id="s2:33" class="idref" href="#s2:33"><span class="id" title="binder">s2</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#interleave.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#interleave.A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s1:32"><span class="id" title="variable">s1</span></a>, <a class="idref" href="Chapter5.html#s2:33"><span class="id" title="variable">s2</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h1</span> <span class="id" title="var">t1</span>, <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h2</span> <span class="id" title="var">t2</span> ⇒ <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h1</span> (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h2</span> (<a class="idref" href="Chapter5.html#interleave:34"><span class="id" title="definition">interleave</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#interleave"><span class="id" title="section">interleave</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="map'" class="idref" href="#map'"><span class="id" title="section">map'</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="map'.A" class="idref" href="#map'.A"><span class="id" title="variable">A</span></a> <a id="map'.B" class="idref" href="#map'.B"><span class="id" title="variable">B</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="map'.f" class="idref" href="#map'.f"><span class="id" title="variable">f</span></a> : <a class="idref" href="Chapter5.html#map'.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#map'.B"><span class="id" title="variable">B</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="map'" class="idref" href="#map'"><span class="id" title="definition">map'</span></a> (<a id="s:43" class="idref" href="#s:43"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#map'.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#map'.B"><span class="id" title="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:43"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="Chapter5.html#interleave"><span class="id" title="definition">interleave</span></a> (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="Chapter5.html#map'.f"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="Chapter5.html#map':44"><span class="id" title="definition">map'</span></a> <span class="id" title="var">t</span>)) (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="Chapter5.html#map'.f"><span class="id" title="variable">f</span></a> <span class="id" title="var">h</span>) (<a class="idref" href="Chapter5.html#map':44"><span class="id" title="definition">map'</span></a> <span class="id" title="var">t</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#map'"><span class="id" title="section">map'</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Rocq will reject definitions when it can't ensure the <i>productivity</i> condition. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="tail'" class="idref" href="#tail'"><span class="id" title="definition">tail'</span></a> (<a id="s:46" class="idref" href="#s:46"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:46"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t</span> ⇒ <span class="id" title="var">t</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">CoFixpoint</span> <a id="bad" class="idref" href="#bad"><span class="id" title="definition">bad</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="Chapter5.html#tail'"><span class="id" title="definition">tail'</span></a> (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> 0 <a class="idref" href="Chapter5.html#bad:48"><span class="id" title="definition">bad</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here the return value doesn't grow, because the additional constructor
+    is then removed by the sneaky <span class="inlinecode"><span class="id" title="var">tail'</span></span> function, so the net progress is zero.
+    In that case, we would have just defined an infinite loop, breaking Rocq.
+
+<div class="paragraph"> </div>
+
+    To ensure the return value grows,  Rocq not only demands a constructor,
+    but demands that everything touching the return value is harmless (not shrinking).
+    So functions are forbidden. Only constructors, and <span class="inlinecode"><span class="id" title="keyword">fun</span></span>, <span class="inlinecode"><span class="id" title="keyword">match</span></span> blocs.
+
+<div class="paragraph"> </div>
+
+    &gt; No shrinking stuffs !
+
+<div class="paragraph"> </div>
+
+    
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab32"></a><h1 class="section">5.2 - Infinite Proofs</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab33"></a><h2 class="section">Q: Give example of 2 equal streams, and prove them equal.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="all_ones_a" class="idref" href="#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> 1 <a class="idref" href="Chapter5.html#all_ones_a:49"><span class="id" title="definition">all_ones_a</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a id="all_ones_b" class="idref" href="#all_ones_b"><span class="id" title="definition">all_ones_b</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="Chapter5.html#stream_map"><span class="id" title="definition">stream_map</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#zeroes"><span class="id" title="definition">zeroes</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_eq" class="idref" href="#stream_eq"><span class="id" title="section">stream_eq</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq.A" class="idref" href="#stream_eq.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoInductive</span> <a id="stream_eq" class="idref" href="#stream_eq"><span class="id" title="inductive">stream_eq</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span> := <br/>
+&nbsp;&nbsp;| <a id="Stream_Eq" class="idref" href="#Stream_Eq"><span class="id" title="constructor">Stream_Eq</span></a> : <span class="id" title="keyword">∀</span> <a id="h:54" class="idref" href="#h:54"><span class="id" title="binder">h</span></a> <a id="t1:55" class="idref" href="#t1:55"><span class="id" title="binder">t1</span></a> <a id="t2:56" class="idref" href="#t2:56"><span class="id" title="binder">t2</span></a>, <a class="idref" href="Chapter5.html#stream_eq:52"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#t1:55"><span class="id" title="variable">t1</span></a> <a class="idref" href="Chapter5.html#t2:56"><span class="id" title="variable">t2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_eq:52"><span class="id" title="inductive">stream_eq</span></a> (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="Chapter5.html#h:54"><span class="id" title="variable">h</span></a> <a class="idref" href="Chapter5.html#t1:55"><span class="id" title="variable">t1</span></a>) (<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <a class="idref" href="Chapter5.html#h:54"><span class="id" title="variable">h</span></a> <a class="idref" href="Chapter5.html#t2:56"><span class="id" title="variable">t2</span></a>)<br/>
+&nbsp;&nbsp;.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="section">stream_eq</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="stream_a_eq_b_try1" class="idref" href="#stream_a_eq_b_try1"><span class="id" title="lemma">stream_a_eq_b_try1</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">cofix</span> <span class="id" title="var">stream_eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="keyword">Guarded</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="frob" class="idref" href="#frob"><span class="id" title="definition">frob</span></a> <a id="A:57" class="idref" href="#A:57"><span class="id" title="binder">A</span></a> (<a id="s:58" class="idref" href="#s:58"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:57"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:57"><span class="id" title="variable">A</span></a> :=<br/>
+<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:58"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">t</span><br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="frob_eq" class="idref" href="#frob_eq"><span class="id" title="lemma">frob_eq</span></a> : <span class="id" title="keyword">∀</span> <a id="A:60" class="idref" href="#A:60"><span class="id" title="binder">A</span></a>, <span class="id" title="keyword">∀</span> (<a id="s:61" class="idref" href="#s:61"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:60"><span class="id" title="variable">A</span></a>), <a class="idref" href="Chapter5.html#frob"><span class="id" title="definition">frob</span></a> <a class="idref" href="Chapter5.html#s:61"><span class="id" title="variable">s</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#s:61"><span class="id" title="variable">s</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">s</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="stream_a_eq_b_try2" class="idref" href="#stream_a_eq_b_try2"><span class="id" title="lemma">stream_a_eq_b_try2</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">cofix</span> <span class="id" title="var">stream_eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<a class="idref" href="Chapter5.html#frob_eq"><span class="id" title="lemma">frob_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<a class="idref" href="Chapter5.html#frob_eq"><span class="id" title="lemma">frob_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="Chapter5.html#frob"><span class="id" title="definition">frob</span></a> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Guarded</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab34"></a><h2 class="section">Q: APARTE : Print and explain the generated proof term <span class="inlinecode"><span class="id" title="var">stream_a_eq_b_try2</span></span></h2>
+
+<div class="paragraph"> </div>
+
+ Destructuring the generated proof term : 
+
+<div class="paragraph"> </div>
+
+<pre>
+Print stream_a_eq_b_try2.
+
+Check eq_ind.
+(A : Type)         1. A            
+(x : A)            2. x            
+(P : A -&gt; Prop),   3. P            
+P x -&gt;             4. P x          
+forall y : A,      5. y            
+x = y              6. x = y        
+-&gt; P y             result : P y    
+
+
+Definition stream_a_eq_b_try2' :=
+  cofix stream_eq : stream_eq all_ones_a all_ones_b :=
+    eq_ind
+--- 2. x ---------------------- i.e.  big_a ------------------------------------
+      (frob all_ones_a)   
+--- 3. P ---------------------- i.e.  s= b -------------------------------------
+      (fun s : stream nat =&gt; cpdt_notes.stream_eq s all_ones_b) 
+--- 4. P x -------------------- i.e.  big_a  s=  b -----------------------------
+      (eq_ind
+-------- 2. x ------ i.e. big_b  -----------------------------------------------
+          (frob all_ones_b)
+-------- 3. P ------ i.e. s= big_a ---------------------------------------------
+          (fun s : stream nat =&gt; cpdt_notes.stream_eq (frob all_ones_a) s)
+-------- 4. P x ---- i.e. big_b s= big_a ---------------------------------------
+          (
+            (
+              Stream_Eq 1 stream_eq
+              
+              : cpdt_notes.stream_eq
+                 ( match all_ones_a with | Cons h t =&gt; Cons h t end )
+                 ( match all_ones_b with | Cons h t =&gt; Cons h t end )
+              : cpdt_notes.stream_eq (frob all_ones_a) (frob all_ones_b)
+            )
+        
+---------- 5. y ----- i.e.  b --------------------------------------------------
+        all_ones_b
+---------- 6. x = y - i.e. big_b = b -------------------------------------------
+        (frob_eq all_ones_b)
+      )
+-------- res  : P y   i.e.  b s= big_a  ----------------------------------------
+
+--- 5. y ----------------------- i.e.  a ---------------------------------------
+      all_ones_a  
+--- 6. x == y ------------------ i.e.  big_a = a -------------------------------
+      (frob_eq all_ones_a)
+--- res ------------------------ i.e   a s= b ----------------------------------
+  : stream_eq all_ones_a all_ones_b
+</pre>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab35"></a><h2 class="section">Q: Proof v2 : Define a coinduction principle</h2>
+
+                    to prove stream equality, and use it. 
+<div class="paragraph"> </div>
+
+ Now let's do better.
+Instad of the boilerplate of magic but painful <span class="inlinecode"><span class="id" title="var">frob</span></span>,
+let's try to arrive at a <span class="inlinecode"><span class="id" title="tactic">induction</span></span> <span class="inlinecode"><span class="id" title="var">x</span>;</span> <span class="inlinecode"><span class="id" title="var">crush</span>.</span> style of proof.
+
+<div class="paragraph"> </div>
+
+And to do so, we'll start by defining a coinductive principle for stream eq.
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="hd" class="idref" href="#hd"><span class="id" title="definition">hd</span></a> <a id="A:62" class="idref" href="#A:62"><span class="id" title="binder">A</span></a> (<a id="s:63" class="idref" href="#s:63"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:62"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#A:62"><span class="id" title="variable">A</span></a> :=<br/>
+<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:63"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">h</span> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">h</span><br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="tl" class="idref" href="#tl"><span class="id" title="definition">tl</span></a> <a id="A:65" class="idref" href="#A:65"><span class="id" title="binder">A</span></a> (<a id="s:66" class="idref" href="#s:66"><span class="id" title="binder">s</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:65"><span class="id" title="variable">A</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#A:65"><span class="id" title="variable">A</span></a> :=<br/>
+<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#s:66"><span class="id" title="variable">s</span></a> <span class="id" title="keyword">with</span><br/>
+| <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t</span> ⇒ <span class="id" title="var">t</span><br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_eq_coind" class="idref" href="#stream_eq_coind"><span class="id" title="section">stream_eq_coind</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_coind.A" class="idref" href="#stream_eq_coind.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Define a relation <span class="inlinecode"><span class="id" title="var">R</span></span> that will represent our property (here stream equality) 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_coind.R" class="idref" href="#stream_eq_coind.R"><span class="id" title="variable">R</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_coind.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_coind.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Define all that must be true for the property to hold (here equality of heads,
+      and passing-on the R-ness to the tail) 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_coind.Cons_case_hd" class="idref" href="#stream_eq_coind.Cons_case_hd"><span class="id" title="variable">Cons_case_hd</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:72" class="idref" href="#s1:72"><span class="id" title="binder">s1</span></a> <a id="s2:73" class="idref" href="#s2:73"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:72"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:73"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s1:72"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s2:73"><span class="id" title="variable">s2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_coind.Cons_case_tl" class="idref" href="#stream_eq_coind.Cons_case_tl"><span class="id" title="variable">Cons_case_tl</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:76" class="idref" href="#s1:76"><span class="id" title="binder">s1</span></a> <a id="s2:77" class="idref" href="#s2:77"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:76"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:77"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_eq_coind.R"><span class="id" title="variable">R</span></a> (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s1:76"><span class="id" title="variable">s1</span></a>) (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s2:77"><span class="id" title="variable">s2</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now prove that this <span class="inlinecode"><span class="id" title="var">R</span></span> relation satisfies stream equality 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="stream_eq_coind" class="idref" href="#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:80" class="idref" href="#s1:80"><span class="id" title="binder">s1</span></a> <a id="s2:81" class="idref" href="#s2:81"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:80"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:81"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#s1:80"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:81"><span class="id" title="variable">s2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">cofix</span> <span class="id" title="var">stream_eq_coind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Nice trick to get equality of both heads (a = a0) 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">s1</span>, <span class="id" title="var">s2</span>. <span class="id" title="tactic">generalize</span> (<a class="idref" href="Chapter5.html#stream_eq_coind.Cons_case_hd"><span class="id" title="variable">Cons_case_hd</span></a> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Heq</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Heq</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Heq</span> <span class="id" title="tactic">in</span> ×.<br/>
+</div>
+
+<div class="doc">
+Moving 1 coinductive step forward 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+</div>
+
+<div class="doc">
+Now we've move forward one step, we can apply the co-inductive hypothesis. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">stream_eq_coind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#stream_eq_coind.Cons_case_tl"><span class="id" title="variable">Cons_case_tl</span></a> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Guarded</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Print</span> <span class="id" title="var">stream_eq_coind</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="section">stream_eq_coind</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now any predicates that satisfies
+    <span class="inlinecode"><span class="id" title="var">Cons_case_hd</span></span> and <span class="inlinecode"><span class="id" title="var">Cons_case_tl</span></span> will do the job.  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="stream_a_eq_b_try3" class="idref" href="#stream_a_eq_b_try3"><span class="id" title="lemma">stream_a_eq_b_try3</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a>(<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s1:82" class="idref" href="#s1:82"><span class="id" title="binder"><span id="s1:84" class="id">s1</span></span></a> <a id="s2:83" class="idref" href="#s2:83"><span class="id" title="binder"><span id="s2:85" class="id">s2</span></span></a> ⇒ <a class="idref" href="Chapter5.html#s1:82"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#s2:83"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>)); <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab36"></a><h2 class="section">Q: APARTE : Illustrate the 'copy/paste' from <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> to <span class="inlinecode"><span class="id" title="var">stream_eq_coind</span></span>.</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+It was not clear to me how the hypotheses of the coinductive principle
+derive immediately from the arguments of the constructor in the coinductive type definition.
+i.e. you take the arguments of <span class="inlinecode"><span class="id" title="var">Stream_Eq</span></span> and you get your hypotheses for <span class="inlinecode"><span class="id" title="var">stream_eq_coind</span></span>.
+
+<div class="paragraph"> </div>
+
+It was not clear because <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> talks in <span class="inlinecode"><span class="id" title="var">s1</span></span> and <span class="inlinecode"><span class="id" title="var">s2</span></span>, and cleverly uses a single <span class="inlinecode"><span class="id" title="var">h</span></span>
+to force equality of heads,
+
+<div class="paragraph"> </div>
+
+while <span class="inlinecode"><span class="id" title="var">stream_eq_coind</span></span> talks in <span class="inlinecode"><span class="id" title="var">h1</span></span>/<span class="inlinecode"><span class="id" title="var">t1</span></span> and <span class="inlinecode"><span class="id" title="var">h2</span></span>/<span class="inlinecode"><span class="id" title="var">t2</span></span>.
+
+<div class="paragraph"> </div>
+
+But we can remove this clever compactness and rewrite <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> as below.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_eq_raw" class="idref" href="#stream_eq_raw"><span class="id" title="section">stream_eq_raw</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_raw.A" class="idref" href="#stream_eq_raw.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">CoInductive</span> <a id="stream_eq_raw" class="idref" href="#stream_eq_raw"><span class="id" title="inductive">stream_eq_raw</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_raw.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_raw.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span> := <br/>
+</div>
+
+<div class="doc">
+First way (and only) to build a proof of <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> <span class="inlinecode"><span class="id" title="var">s1</span></span> <span class="inlinecode"><span class="id" title="var">s2</span></span> 
+</div>
+<div class="code">
+&nbsp;&nbsp;| <a id="Stream_Eq'" class="idref" href="#Stream_Eq'"><span class="id" title="constructor">Stream_Eq'</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:90" class="idref" href="#s1:90"><span class="id" title="binder">s1</span></a> <a id="s2:91" class="idref" href="#s2:91"><span class="id" title="binder">s2</span></a>,         <br/>
+</div>
+
+<div class="doc">
+Precond 1 : equality of heads 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s1:90"><span class="id" title="variable">s1</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s2:91"><span class="id" title="variable">s2</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a>             <br/>
+</div>
+
+<div class="doc">
+Precond 2 : equality of tails 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#stream_eq_raw:88"><span class="id" title="inductive">stream_eq_raw</span></a> (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s1:90"><span class="id" title="variable">s1</span></a>) (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s2:91"><span class="id" title="variable">s2</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <br/>
+</div>
+
+<div class="doc">
+The result : equality of streams, our <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> <span class="inlinecode"><span class="id" title="var">s1</span></span> <span class="inlinecode"><span class="id" title="var">s2</span></span>  
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#stream_eq_raw:88"><span class="id" title="inductive">stream_eq_raw</span></a> <a class="idref" href="Chapter5.html#s1:90"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:91"><span class="id" title="variable">s2</span></a>              <br/>
+&nbsp;&nbsp;.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now for the coind principle,
+    the hypotheses are exactly the preconds above. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_raw.R" class="idref" href="#stream_eq_raw.R"><span class="id" title="variable">R</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_raw.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_raw.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Precond 1 : equality of heads 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_raw.Cons_case_hd" class="idref" href="#stream_eq_raw.Cons_case_hd"><span class="id" title="variable">Cons_case_hd</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:94" class="idref" href="#s1:94"><span class="id" title="binder">s1</span></a> <a id="s2:95" class="idref" href="#s2:95"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_raw.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:94"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:95"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s1:94"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#s2:95"><span class="id" title="variable">s2</span></a>. </div>
+
+<div class="doc">
+Precond 2 : equality of tails 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_raw.Cons_case_tl" class="idref" href="#stream_eq_raw.Cons_case_tl"><span class="id" title="variable">Cons_case_tl</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:98" class="idref" href="#s1:98"><span class="id" title="binder">s1</span></a> <a id="s2:99" class="idref" href="#s2:99"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_raw.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:98"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:99"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_eq_raw.R"><span class="id" title="variable">R</span></a> (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s1:98"><span class="id" title="variable">s1</span></a>) (<a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#s2:99"><span class="id" title="variable">s2</span></a>). 
+<br/>
+</div>
+
+<div class="doc">
+The result : equality of streams, our <span class="inlinecode"><span class="id" title="var">stream_eq</span></span> <span class="inlinecode"><span class="id" title="var">s1</span></span> <span class="inlinecode"><span class="id" title="var">s2</span></span>  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="stream_eq_coind_raw" class="idref" href="#stream_eq_coind_raw"><span class="id" title="lemma">stream_eq_coind_raw</span></a> : <span class="id" title="keyword">∀</span> <a id="s1:102" class="idref" href="#s1:102"><span class="id" title="binder">s1</span></a> <a id="s2:103" class="idref" href="#s2:103"><span class="id" title="binder">s2</span></a>, <a class="idref" href="Chapter5.html#stream_eq_raw.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#s1:102"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:103"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#s1:102"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#s2:103"><span class="id" title="variable">s2</span></a>. &nbsp;&nbsp;<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_eq_raw"><span class="id" title="section">stream_eq_raw</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab37"></a><h2 class="section">Q: Proof v3 : How to prove equality without defining any <span class="inlinecode"><span class="id" title="var">R</span></span> ?</h2>
+
+<div class="paragraph"> </div>
+
+ Better, but we still have to define a clever <span class="inlinecode"><span class="id" title="var">R</span></span>, this is annoying 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_eq_loop" class="idref" href="#stream_eq_loop"><span class="id" title="section">stream_eq_loop</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_loop.A" class="idref" href="#stream_eq_loop.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_loop.s1" class="idref" href="#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a> <a id="stream_eq_loop.s2" class="idref" href="#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a> : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.A"><span class="id" title="variable">A</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_loop.Cons_case_hd" class="idref" href="#stream_eq_loop.Cons_case_hd"><span class="id" title="variable">Cons_case_hd</span></a> : <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_loop.loop1" class="idref" href="#stream_eq_loop.loop1"><span class="id" title="variable">loop1</span></a> : <a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_loop.loop2" class="idref" href="#stream_eq_loop.loop2"><span class="id" title="variable">loop2</span></a> : <a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="stream_eq_loop" class="idref" href="#stream_eq_loop"><span class="id" title="lemma">stream_eq_loop</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s1':116" class="idref" href="#s1':116"><span class="id" title="binder"><span id="s1':118" class="id">s1'</span></span></a> <a id="s2':117" class="idref" href="#s2':117"><span class="id" title="binder"><span id="s2':119" class="id">s2'</span></span></a> ⇒ <a class="idref" href="Chapter5.html#s1':116"><span class="id" title="variable">s1'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s1"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#s2':117"><span class="id" title="variable">s2'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop.s2"><span class="id" title="variable">s2</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;)); <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_eq_loop"><span class="id" title="section">stream_eq_loop</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="stream_a_eq_b_try4" class="idref" href="#stream_a_eq_b_try4"><span class="id" title="lemma">stream_a_eq_b_try4</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#all_ones_a"><span class="id" title="definition">all_ones_a</span></a> <a class="idref" href="Chapter5.html#all_ones_b"><span class="id" title="definition">all_ones_b</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="Chapter5.html#stream_eq_loop"><span class="id" title="lemma">stream_eq_loop</span></a>; <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab38"></a><h2 class="section">Q: Factorials : Define the stream of factorials</h2>
+
+                    (naive and iterative variants). 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">fact</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Let's build the stream of all factorials.
+The simplest and naive way is to call <span class="inlinecode"><span class="id" title="var">fact</span></span> on all elements.
+
+</div>
+<div class="code">
+<span class="id" title="keyword">CoFixpoint</span> <a id="fact_slow_aux" class="idref" href="#fact_slow_aux"><span class="id" title="definition">fact_slow_aux</span></a> (<a id="n:120" class="idref" href="#n:120"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> := <a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> (<span class="id" title="definition">fact</span> <a class="idref" href="Chapter5.html#n:120"><span class="id" title="variable">n</span></a>) (<a class="idref" href="Chapter5.html#fact_slow_aux:121"><span class="id" title="definition">fact_slow_aux</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:120"><span class="id" title="variable">n</span></a>)).<br/>
+<span class="id" title="keyword">Definition</span> <a id="fact_slow" class="idref" href="#fact_slow"><span class="id" title="definition">fact_slow</span></a> := <a class="idref" href="Chapter5.html#fact_slow_aux"><span class="id" title="definition">fact_slow_aux</span></a> 1.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now a clever implementation with an accumulator 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">CoFixpoint</span> <a id="fact_iter_aux" class="idref" href="#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> (<a id="n:122" class="idref" href="#n:122"><span class="id" title="binder">n</span></a> <a id="acc:123" class="idref" href="#acc:123"><span class="id" title="binder">acc</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#Cons"><span class="id" title="constructor">Cons</span></a> (<a class="idref" href="Chapter5.html#acc:123"><span class="id" title="variable">acc</span></a>) (<a class="idref" href="Chapter5.html#fact_iter_aux:124"><span class="id" title="definition">fact_iter_aux</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:122"><span class="id" title="variable">n</span></a>) (<a class="idref" href="Chapter5.html#n:122"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#ea2ff3d561159081cea6fb2e8113cc54"><span class="id" title="notation">×</span></a> <a class="idref" href="Chapter5.html#acc:123"><span class="id" title="variable">acc</span></a>)).<br/>
+<span class="id" title="keyword">Definition</span> <a id="fact_iter" class="idref" href="#fact_iter"><span class="id" title="definition">fact_iter</span></a> := <a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> 2 1.<br/>
+
+<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#fact_slow"><span class="id" title="definition">fact_slow</span></a> 5.<br/>
+<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <a class="idref" href="Chapter5.html#approx"><span class="id" title="definition">approx</span></a> <a class="idref" href="Chapter5.html#fact_iter"><span class="id" title="definition">fact_iter</span></a> 5.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab39"></a><h2 class="section">Q: Factorials v1 : Prove them equal</h2>
+
+<div class="paragraph"> </div>
+
+ Some magic in the book not explained on purpose yet. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a id="fact_def" class="idref" href="#fact_def"><span class="id" title="lemma">fact_def</span></a> : <span class="id" title="keyword">∀</span> <a id="x:125" class="idref" href="#x:125"><span class="id" title="binder">x</span></a> <a id="n:126" class="idref" href="#n:126"><span class="id" title="binder">n</span></a>,<br/>
+<a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> <a class="idref" href="Chapter5.html#x:125"><span class="id" title="variable">x</span></a> (<span class="id" title="definition">fact</span> <a class="idref" href="Chapter5.html#n:126"><span class="id" title="variable">n</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#ea2ff3d561159081cea6fb2e8113cc54"><span class="id" title="notation">×</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:126"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> <a class="idref" href="Chapter5.html#x:125"><span class="id" title="variable">x</span></a> (<span class="id" title="definition">fact</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:126"><span class="id" title="variable">n</span></a>)).<br/>
+<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">f_equal</span>; <span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Hint Resolve</span> <span class="id" title="var">fact_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Check</span> <a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="fact_eq'" class="idref" href="#fact_eq'"><span class="id" title="lemma">fact_eq'</span></a> : <span class="id" title="keyword">∀</span> <a id="n:127" class="idref" href="#n:127"><span class="id" title="binder">n</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> (<a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:127"><span class="id" title="variable">n</span></a>) (<span class="id" title="definition">fact</span> <a class="idref" href="Chapter5.html#n:127"><span class="id" title="variable">n</span></a>)) (<a class="idref" href="Chapter5.html#fact_slow_aux"><span class="id" title="definition">fact_slow_aux</span></a> <a class="idref" href="Chapter5.html#n:127"><span class="id" title="variable">n</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">R</span> := (<span class="id" title="keyword">fun</span> <a id="s1:128" class="idref" href="#s1:128"><span class="id" title="binder"><span id="s1:131" class="id">s1</span></span></a> <a id="s2:129" class="idref" href="#s2:129"><span class="id" title="binder"><span id="s2:132" class="id">s2</span></span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="n:130" class="idref" href="#n:130"><span class="id" title="binder"><span id="n:133" class="id">n</span></span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#s1:128"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:130"><span class="id" title="variable">n</span></a>) (<span class="id" title="definition">fact</span> <a class="idref" href="Chapter5.html#n:130"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#s2:129"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#fact_slow_aux"><span class="id" title="definition">fact_slow_aux</span></a> <a class="idref" href="Chapter5.html#n:130"><span class="id" title="variable">n</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a> <span class="id" title="var">R</span>); <span class="id" title="tactic">unfold</span> <span class="id" title="var">R</span> <span class="id" title="tactic">in</span> *; <span class="id" title="var">crush</span>; <span class="id" title="tactic">eauto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="fact_eq" class="idref" href="#fact_eq"><span class="id" title="lemma">fact_eq</span></a> : <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> <a class="idref" href="Chapter5.html#fact_iter"><span class="id" title="definition">fact_iter</span></a> <a class="idref" href="Chapter5.html#fact_slow"><span class="id" title="definition">fact_slow</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">apply</span> <a class="idref" href="Chapter5.html#fact_eq'"><span class="id" title="lemma">fact_eq'</span></a>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab40"></a><h2 class="section">Q: Factorials v2 : Simpler proof of lemma</h2>
+
+                    through <span class="inlinecode"><span class="id" title="var">stream_eq_loop</span></span> trick. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="stream_eq_loop_onequant" class="idref" href="#stream_eq_loop_onequant"><span class="id" title="section">stream_eq_loop_onequant</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_loop_onequant.A" class="idref" href="#stream_eq_loop_onequant.A"><span class="id" title="variable">A</span></a> <a id="stream_eq_loop_onequant.B" class="idref" href="#stream_eq_loop_onequant.B"><span class="id" title="variable">B</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="stream_eq_loop_onequant.f1" class="idref" href="#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a id="stream_eq_loop_onequant.f2" class="idref" href="#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> : <a class="idref" href="Chapter5.html#stream_eq_loop_onequant.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#stream"><span class="id" title="inductive">stream</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop_onequant.B"><span class="id" title="variable">B</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_loop_onequant.Coind_hd" class="idref" href="#stream_eq_loop_onequant.Coind_hd"><span class="id" title="variable">Coind_hd</span></a> : <span class="id" title="keyword">∀</span> <a id="x:142" class="idref" href="#x:142"><span class="id" title="binder">x</span></a>, <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a class="idref" href="Chapter5.html#x:142"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#hd"><span class="id" title="definition">hd</span></a> (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> <a class="idref" href="Chapter5.html#x:142"><span class="id" title="variable">x</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="stream_eq_loop_onequant.Coind_tl" class="idref" href="#stream_eq_loop_onequant.Coind_tl"><span class="id" title="variable">Coind_tl</span></a> : <span class="id" title="keyword">∀</span> <a id="x:145" class="idref" href="#x:145"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="y:146" class="idref" href="#y:146"><span class="id" title="binder">y</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a class="idref" href="Chapter5.html#x:145"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a class="idref" href="Chapter5.html#y:146"><span class="id" title="variable">y</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#tl"><span class="id" title="definition">tl</span></a> (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> <a class="idref" href="Chapter5.html#x:145"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> <a class="idref" href="Chapter5.html#y:146"><span class="id" title="variable">y</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="stream_eq_loop_onequant" class="idref" href="#stream_eq_loop_onequant"><span class="id" title="lemma">stream_eq_loop_onequant</span></a> : <span class="id" title="keyword">∀</span> <a id="x:149" class="idref" href="#x:149"><span class="id" title="binder">x</span></a>, <a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a class="idref" href="Chapter5.html#x:149"><span class="id" title="variable">x</span></a>) (<a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> <a class="idref" href="Chapter5.html#x:149"><span class="id" title="variable">x</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#stream_eq_coind"><span class="id" title="lemma">stream_eq_coind</span></a> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s1:150" class="idref" href="#s1:150"><span class="id" title="binder"><span id="s1:153" class="id">s1</span></span></a> <a id="s2:151" class="idref" href="#s2:151"><span class="id" title="binder"><span id="s2:154" class="id">s2</span></span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="y:152" class="idref" href="#y:152"><span class="id" title="binder"><span id="y:155" class="id">y</span></span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="Chapter5.html#s1:150"><span class="id" title="variable">s1</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f1"><span class="id" title="variable">f1</span></a> <a class="idref" href="Chapter5.html#y:152"><span class="id" title="variable">y</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#s2:151"><span class="id" title="variable">s2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#stream_eq_loop_onequant.f2"><span class="id" title="variable">f2</span></a> <a class="idref" href="Chapter5.html#y:152"><span class="id" title="variable">y</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;)); <span class="id" title="var">crush</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#stream_eq_loop_onequant"><span class="id" title="section">stream_eq_loop_onequant</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="fact_eq''" class="idref" href="#fact_eq''"><span class="id" title="lemma">fact_eq''</span></a> : <span class="id" title="keyword">∀</span> <a id="n:156" class="idref" href="#n:156"><span class="id" title="binder">n</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#stream_eq"><span class="id" title="inductive">stream_eq</span></a> (<a class="idref" href="Chapter5.html#fact_iter_aux"><span class="id" title="definition">fact_iter_aux</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="Chapter5.html#n:156"><span class="id" title="variable">n</span></a>) (<span class="id" title="definition">fact</span> <a class="idref" href="Chapter5.html#n:156"><span class="id" title="variable">n</span></a>)) (<a class="idref" href="Chapter5.html#fact_slow_aux"><span class="id" title="definition">fact_slow_aux</span></a> <a class="idref" href="Chapter5.html#n:156"><span class="id" title="variable">n</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="Chapter5.html#stream_eq_loop_onequant"><span class="id" title="lemma">stream_eq_loop_onequant</span></a>; <span class="id" title="var">crush</span>; <span class="id" title="tactic">eauto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab41"></a><h1 class="section">5.3 - Simple Modeling of non-terminating programs</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab42"></a><h2 class="section">Q: Define a little language with :</h2>
+
+
+<div class="paragraph"> </div>
+
+  The memory : 
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">var</span></span> as <span class="inlinecode"><span class="id" title="var">nat</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">vars</span></span> as a map from variables to values
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="tactic">set</span></span> to assign a value to a variable
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+  The expressions :
+<ul class="doclist">
+<li> constant
+
+</li>
+<li> variable
+
+</li>
+<li> addition
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+  (and an evaluation function)
+
+<div class="paragraph"> </div>
+
+  The commands :
+<ul class="doclist">
+<li> assignment
+
+</li>
+<li> sequence
+
+</li>
+<li> while loop (let's say <span class="inlinecode"><span class="id" title="var">cond</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">expr</span></span>, and <span class="inlinecode"><span class="id" title="var">false</span></span> means <span class="inlinecode"><span class="id" title="var">eq</span></span> <span class="inlinecode">0</span>)
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="var" class="idref" href="#var"><span class="id" title="definition">var</span></a> := <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a id="vars" class="idref" href="#vars"><span class="id" title="definition">vars</span></a> := <a class="idref" href="Chapter5.html#var"><span class="id" title="definition">var</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="set" class="idref" href="#set"><span class="id" title="definition">set</span></a> (<a id="vs:157" class="idref" href="#vs:157"><span class="id" title="binder">vs</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a>) (<a id="v:158" class="idref" href="#v:158"><span class="id" title="binder">v</span></a> : <a class="idref" href="Chapter5.html#var"><span class="id" title="definition">var</span></a>) (<a id="n:159" class="idref" href="#n:159"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="v':160" class="idref" href="#v':160"><span class="id" title="binder">v'</span></a> ⇒ <span class="id" title="keyword">if</span> <span class="id" title="definition">Nat.eqb</span> <a class="idref" href="Chapter5.html#v':160"><span class="id" title="variable">v'</span></a> <a class="idref" href="Chapter5.html#v:158"><span class="id" title="variable">v</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="Chapter5.html#n:159"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="Chapter5.html#vs:157"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#v:158"><span class="id" title="variable">v</span></a>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="exp" class="idref" href="#exp"><span class="id" title="definition, inductive"><span id="exp_rect" class="id"><span id="exp_ind" class="id"><span id="exp_rec" class="id"><span id="exp_sind" class="id">exp</span></span></span></span></span></a> : <span class="id" title="keyword">Set</span> :=<br/>
+| <a id="E_Const" class="idref" href="#E_Const"><span class="id" title="constructor">E_Const</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#exp:161"><span class="id" title="inductive">exp</span></a><br/>
+| <a id="E_Var" class="idref" href="#E_Var"><span class="id" title="constructor">E_Var</span></a> : <a class="idref" href="Chapter5.html#var"><span class="id" title="definition">var</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#exp:161"><span class="id" title="inductive">exp</span></a><br/>
+| <a id="E_Plus" class="idref" href="#E_Plus"><span class="id" title="constructor">E_Plus</span></a> : <a class="idref" href="Chapter5.html#exp:161"><span class="id" title="inductive">exp</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#exp:161"><span class="id" title="inductive">exp</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#exp:161"><span class="id" title="inductive">exp</span></a><br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="evalExp" class="idref" href="#evalExp"><span class="id" title="definition">evalExp</span></a> (<a id="vs:163" class="idref" href="#vs:163"><span class="id" title="binder">vs</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a>) (<a id="e:164" class="idref" href="#e:164"><span class="id" title="binder">e</span></a> : <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#e:164"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Const"><span class="id" title="constructor">E_Const</span></a> <span class="id" title="var">n</span> ⇒ <span class="id" title="var">n</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Var"><span class="id" title="constructor">E_Var</span></a> <span class="id" title="var">v</span> ⇒ <a class="idref" href="Chapter5.html#vs:163"><span class="id" title="variable">vs</span></a> <span class="id" title="var">v</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Plus"><span class="id" title="constructor">E_Plus</span></a> <span class="id" title="var">e1</span> <span class="id" title="var">e2</span> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalExp:165"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:163"><span class="id" title="variable">vs</span></a> <span class="id" title="var">e1</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalExp:165"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:163"><span class="id" title="variable">vs</span></a> <span class="id" title="var">e2</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="cmd" class="idref" href="#cmd"><span class="id" title="definition, inductive"><span id="cmd_rect" class="id"><span id="cmd_ind" class="id"><span id="cmd_rec" class="id"><span id="cmd_sind" class="id">cmd</span></span></span></span></span></a> : <span class="id" title="keyword">Set</span> :=<br/>
+| <a id="C_Asgn" class="idref" href="#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> : <a class="idref" href="Chapter5.html#var"><span class="id" title="definition">var</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a>    <br/>
+| <a id="C_Seq" class="idref" href="#C_Seq"><span class="id" title="constructor">C_Seq</span></a> : <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a>     <br/>
+| <a id="C_While" class="idref" href="#C_While"><span class="id" title="constructor">C_While</span></a> : <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd:167"><span class="id" title="inductive">cmd</span></a>  <br/>
+.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab43"></a><h2 class="section">Q: Now, what object to define the evaluation of command, and why ?</h2>
+
+<div class="paragraph"> </div>
+
+ Defining it as a function won't work because
+    it could not terminate because of infinite <span class="inlinecode"><span class="id" title="var">C_While</span></span> loops,
+    and Rocq won't allow us to build such a non-terminating function.
+
+<div class="paragraph"> </div>
+
+    Below we try and it indeed fails,
+    saying it can't determine a decreasing argument,
+    which is normal because there can't be one.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="var">Fail</span> <span class="id" title="keyword">Fixpoint</span> <a id="evalCmd_fix" class="idref" href="#evalCmd_fix"><span class="id" title="definition">evalCmd_fix</span></a> (<a id="vs:169" class="idref" href="#vs:169"><span class="id" title="binder">vs</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a>) (<a id="c:170" class="idref" href="#c:170"><span class="id" title="binder">c</span></a> : <a class="idref" href="Chapter5.html#cmd"><span class="id" title="inductive">cmd</span></a>) : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="self:172" class="idref" href="#self:172"><span class="id" title="binder">self</span></a> := <a class="idref" href="Chapter5.html#evalCmd_fix:171"><span class="id" title="definition">evalCmd_fix</span></a> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#c:170"><span class="id" title="variable">c</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> <span class="id" title="var">v</span> <span class="id" title="var">e</span> ⇒ <a class="idref" href="Chapter5.html#set"><span class="id" title="definition">set</span></a> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="var">v</span> (<a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="var">e</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_Seq"><span class="id" title="constructor">C_Seq</span></a> <span class="id" title="var">c1</span> <span class="id" title="var">c2</span> ⇒ (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="vs':174" class="idref" href="#vs':174"><span class="id" title="binder">vs'</span></a> := <a class="idref" href="Chapter5.html#self:172"><span class="id" title="variable">self</span></a> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="var">c1</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#self:172"><span class="id" title="variable">self</span></a> <a class="idref" href="Chapter5.html#vs':174"><span class="id" title="variable">vs'</span></a> <span class="id" title="var">c2</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <span class="id" title="var">cond</span> <span class="id" title="var">body</span> ⇒ (<span class="id" title="keyword">if</span> <span class="id" title="definition">Nat.eqb</span> (<a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="var">cond</span>) 0 <span class="id" title="keyword">then</span> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="keyword">else</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="vs':175" class="idref" href="#vs':175"><span class="id" title="binder">vs'</span></a> := <a class="idref" href="Chapter5.html#self:172"><span class="id" title="variable">self</span></a> <a class="idref" href="Chapter5.html#vs:169"><span class="id" title="variable">vs</span></a> <span class="id" title="var">body</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#self:172"><span class="id" title="variable">self</span></a> <a class="idref" href="Chapter5.html#vs':175"><span class="id" title="variable">vs'</span></a> <a class="idref" href="Chapter5.html#c:170"><span class="id" title="variable">c</span></a>))<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Inductive definition won't capture non-terminating executions.
+    So we go with the CoInductive definition.  
+</div>
+<div class="code">
+<span class="id" title="keyword">CoInductive</span> <a id="evalCmd" class="idref" href="#evalCmd"><span class="id" title="inductive">evalCmd</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd"><span class="id" title="inductive">cmd</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span> :=<br/>
+| <a id="EC_Assign" class="idref" href="#EC_Assign"><span class="id" title="constructor">EC_Assign</span></a> : <span class="id" title="keyword">∀</span> (<a id="vs:178" class="idref" href="#vs:178"><span class="id" title="binder">vs</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a>) (<a id="v:179" class="idref" href="#v:179"><span class="id" title="binder">v</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="e:180" class="idref" href="#e:180"><span class="id" title="binder">e</span></a> : <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:178"><span class="id" title="variable">vs</span></a>  (<a class="idref" href="Chapter5.html#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> <a class="idref" href="Chapter5.html#v:179"><span class="id" title="variable">v</span></a> <a class="idref" href="Chapter5.html#e:180"><span class="id" title="variable">e</span></a>)  (<a class="idref" href="Chapter5.html#set"><span class="id" title="definition">set</span></a> <a class="idref" href="Chapter5.html#vs:178"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#v:179"><span class="id" title="variable">v</span></a> (<a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:178"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#e:180"><span class="id" title="variable">e</span></a>))<br/>
+| <a id="EC_Seq" class="idref" href="#EC_Seq"><span class="id" title="constructor">EC_Seq</span></a> : <span class="id" title="keyword">∀</span> <a id="c1:181" class="idref" href="#c1:181"><span class="id" title="binder">c1</span></a> <a id="c2:182" class="idref" href="#c2:182"><span class="id" title="binder">c2</span></a> <a id="vs:183" class="idref" href="#vs:183"><span class="id" title="binder">vs</span></a> <a id="vs':184" class="idref" href="#vs':184"><span class="id" title="binder">vs'</span></a> <a id="vs'':185" class="idref" href="#vs'':185"><span class="id" title="binder">vs''</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:183"><span class="id" title="variable">vs</span></a>  <a class="idref" href="Chapter5.html#c1:181"><span class="id" title="variable">c1</span></a> <a class="idref" href="Chapter5.html#vs':184"><span class="id" title="variable">vs'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs':184"><span class="id" title="variable">vs'</span></a> <a class="idref" href="Chapter5.html#c2:182"><span class="id" title="variable">c2</span></a> <a class="idref" href="Chapter5.html#vs'':185"><span class="id" title="variable">vs''</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:183"><span class="id" title="variable">vs</span></a>  (<a class="idref" href="Chapter5.html#C_Seq"><span class="id" title="constructor">C_Seq</span></a> <a class="idref" href="Chapter5.html#c1:181"><span class="id" title="variable">c1</span></a> <a class="idref" href="Chapter5.html#c2:182"><span class="id" title="variable">c2</span></a>)  <a class="idref" href="Chapter5.html#vs'':185"><span class="id" title="variable">vs''</span></a><br/>
+| <a id="EC_WhileFalse" class="idref" href="#EC_WhileFalse"><span class="id" title="constructor">EC_WhileFalse</span></a> : <span class="id" title="keyword">∀</span> <a id="cond:186" class="idref" href="#cond:186"><span class="id" title="binder">cond</span></a> <a id="body:187" class="idref" href="#body:187"><span class="id" title="binder">body</span></a> <a id="vs:188" class="idref" href="#vs:188"><span class="id" title="binder">vs</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:188"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#cond:186"><span class="id" title="variable">cond</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 0 <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:188"><span class="id" title="variable">vs</span></a>  (<a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <a class="idref" href="Chapter5.html#cond:186"><span class="id" title="variable">cond</span></a> <a class="idref" href="Chapter5.html#body:187"><span class="id" title="variable">body</span></a>)  <a class="idref" href="Chapter5.html#vs:188"><span class="id" title="variable">vs</span></a><br/>
+| <a id="EC_WhileTrue" class="idref" href="#EC_WhileTrue"><span class="id" title="constructor">EC_WhileTrue</span></a> : <span class="id" title="keyword">∀</span> <a id="cond:189" class="idref" href="#cond:189"><span class="id" title="binder">cond</span></a> <a id="body:190" class="idref" href="#body:190"><span class="id" title="binder">body</span></a> <a id="vs:191" class="idref" href="#vs:191"><span class="id" title="binder">vs</span></a> <a id="vs':192" class="idref" href="#vs':192"><span class="id" title="binder">vs'</span></a> <a id="vs'':193" class="idref" href="#vs'':193"><span class="id" title="binder">vs''</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:191"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#cond:189"><span class="id" title="variable">cond</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">≠</span></a> 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:191"><span class="id" title="variable">vs</span></a>   <a class="idref" href="Chapter5.html#body:190"><span class="id" title="variable">body</span></a>  <a class="idref" href="Chapter5.html#vs':192"><span class="id" title="variable">vs'</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs':192"><span class="id" title="variable">vs'</span></a>  (<a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <a class="idref" href="Chapter5.html#cond:189"><span class="id" title="variable">cond</span></a> <a class="idref" href="Chapter5.html#body:190"><span class="id" title="variable">body</span></a>)  <a class="idref" href="Chapter5.html#vs'':193"><span class="id" title="variable">vs''</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd:176"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:191"><span class="id" title="variable">vs</span></a>   (<a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <a class="idref" href="Chapter5.html#cond:189"><span class="id" title="variable">cond</span></a> <a class="idref" href="Chapter5.html#body:190"><span class="id" title="variable">body</span></a>)  <a class="idref" href="Chapter5.html#vs'':193"><span class="id" title="variable">vs''</span></a><br/>
+.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab44"></a><h2 class="section">Q: Define a coinductive principle for the <span class="inlinecode"><span class="id" title="var">evalCmd</span></span> relation.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="evalCmd_coind" class="idref" href="#evalCmd_coind"><span class="id" title="section">evalCmd_coind</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a id="evalCmd_coind.R" class="idref" href="#evalCmd_coind.R"><span class="id" title="variable">R</span></a> : <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#cmd"><span class="id" title="inductive">cmd</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#vars"><span class="id" title="definition">vars</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="evalCmd_coind.HC_Asgn" class="idref" href="#evalCmd_coind.HC_Asgn"><span class="id" title="variable">HC_Asgn</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:196" class="idref" href="#vs:196"><span class="id" title="binder">vs</span></a> <a id="vs':197" class="idref" href="#vs':197"><span class="id" title="binder">vs'</span></a> <a id="v:198" class="idref" href="#v:198"><span class="id" title="binder">v</span></a> <a id="e:199" class="idref" href="#e:199"><span class="id" title="binder">e</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:196"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> <a class="idref" href="Chapter5.html#v:198"><span class="id" title="variable">v</span></a> <a class="idref" href="Chapter5.html#e:199"><span class="id" title="variable">e</span></a>) <a class="idref" href="Chapter5.html#vs':197"><span class="id" title="variable">vs'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#vs':197"><span class="id" title="variable">vs'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#set"><span class="id" title="definition">set</span></a> <a class="idref" href="Chapter5.html#vs:196"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#v:198"><span class="id" title="variable">v</span></a> (<a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:196"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#e:199"><span class="id" title="variable">e</span></a>)<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="evalCmd_coind.HC_Seq" class="idref" href="#evalCmd_coind.HC_Seq"><span class="id" title="variable">HC_Seq</span></a> : <span class="id" title="keyword">∀</span> <a id="c1:202" class="idref" href="#c1:202"><span class="id" title="binder">c1</span></a> <a id="c2:203" class="idref" href="#c2:203"><span class="id" title="binder">c2</span></a> <a id="vs:204" class="idref" href="#vs:204"><span class="id" title="binder">vs</span></a> <a id="vs':205" class="idref" href="#vs':205"><span class="id" title="binder">vs'</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:204"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#C_Seq"><span class="id" title="constructor">C_Seq</span></a> <a class="idref" href="Chapter5.html#c1:202"><span class="id" title="variable">c1</span></a> <a class="idref" href="Chapter5.html#c2:203"><span class="id" title="variable">c2</span></a>) <a class="idref" href="Chapter5.html#vs':205"><span class="id" title="variable">vs'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="vs'':206" class="idref" href="#vs'':206"><span class="id" title="binder">vs''</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:204"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#c1:202"><span class="id" title="variable">c1</span></a> <a class="idref" href="Chapter5.html#vs'':206"><span class="id" title="variable">vs''</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs'':206"><span class="id" title="variable">vs''</span></a> <a class="idref" href="Chapter5.html#c2:203"><span class="id" title="variable">c2</span></a> <a class="idref" href="Chapter5.html#vs':205"><span class="id" title="variable">vs'</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a id="evalCmd_coind.HC_While" class="idref" href="#evalCmd_coind.HC_While"><span class="id" title="variable">HC_While</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:209" class="idref" href="#vs:209"><span class="id" title="binder">vs</span></a> <a id="vs':210" class="idref" href="#vs':210"><span class="id" title="binder">vs'</span></a> <a id="cond:211" class="idref" href="#cond:211"><span class="id" title="binder">cond</span></a> <a id="body:212" class="idref" href="#body:212"><span class="id" title="binder">body</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:209"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <a class="idref" href="Chapter5.html#cond:211"><span class="id" title="variable">cond</span></a> <a class="idref" href="Chapter5.html#body:212"><span class="id" title="variable">body</span></a>) <a class="idref" href="Chapter5.html#vs':210"><span class="id" title="variable">vs'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:209"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#cond:211"><span class="id" title="variable">cond</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 0 <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#vs:209"><span class="id" title="variable">vs</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#vs':210"><span class="id" title="variable">vs'</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">)</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">(</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="vs'':213" class="idref" href="#vs'':213"><span class="id" title="binder">vs''</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:209"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#cond:211"><span class="id" title="variable">cond</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">≠</span></a> 0 <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:209"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#body:212"><span class="id" title="variable">body</span></a> <a class="idref" href="Chapter5.html#vs'':213"><span class="id" title="variable">vs''</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs'':213"><span class="id" title="variable">vs''</span></a> (<a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <a class="idref" href="Chapter5.html#cond:211"><span class="id" title="variable">cond</span></a> <a class="idref" href="Chapter5.html#body:212"><span class="id" title="variable">body</span></a>) <a class="idref" href="Chapter5.html#vs':210"><span class="id" title="variable">vs'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="evalCmd_coind" class="idref" href="#evalCmd_coind"><span class="id" title="lemma">evalCmd_coind</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:216" class="idref" href="#vs:216"><span class="id" title="binder">vs</span></a> <a id="vs':217" class="idref" href="#vs':217"><span class="id" title="binder">vs'</span></a> <a id="c:218" class="idref" href="#c:218"><span class="id" title="binder">c</span></a>, <a class="idref" href="Chapter5.html#evalCmd_coind.R"><span class="id" title="variable">R</span></a> <a class="idref" href="Chapter5.html#vs:216"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#c:218"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs':217"><span class="id" title="variable">vs'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:216"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#c:218"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs':217"><span class="id" title="variable">vs'</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">cofix</span> <span class="id" title="var">evalCmd_coind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> (<a class="idref" href="Chapter5.html#evalCmd_coind.HC_Asgn"><span class="id" title="variable">HC_Asgn</span></a> <span class="id" title="var">H</span>). <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="Chapter5.html#evalCmd_coind.HC_Seq"><span class="id" title="variable">HC_Seq</span></a> <span class="id" title="var">H</span>) <span class="id" title="keyword">as</span> [? [? ?]]. <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="Chapter5.html#evalCmd_coind.HC_While"><span class="id" title="variable">HC_While</span></a> <span class="id" title="var">H</span>) <span class="id" title="keyword">as</span> [ [? ?] | [? [? [? ?]] ] ];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">subst</span>; <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Chapter5.html#evalCmd_coind"><span class="id" title="section">evalCmd_coind</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab45"></a><h2 class="section">Q: Now write a simple optimizing pass replacing <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">e</span></span> with <span class="inlinecode"><span class="id" title="var">e</span></span>.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="optExp" class="idref" href="#optExp"><span class="id" title="definition">optExp</span></a> (<a id="e:219" class="idref" href="#e:219"><span class="id" title="binder">e</span></a> : <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a>) : <a class="idref" href="Chapter5.html#exp"><span class="id" title="inductive">exp</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#e:219"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Const"><span class="id" title="constructor">E_Const</span></a> <span class="id" title="var">n</span> ⇒ <a class="idref" href="Chapter5.html#e:219"><span class="id" title="variable">e</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Var"><span class="id" title="constructor">E_Var</span></a> <span class="id" title="var">v</span>  ⇒ <a class="idref" href="Chapter5.html#e:219"><span class="id" title="variable">e</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Plus"><span class="id" title="constructor">E_Plus</span></a> <span class="id" title="var">e1</span> <span class="id" title="var">e2</span> ⇒ (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="e1':222" class="idref" href="#e1':222"><span class="id" title="binder">e1'</span></a> := <a class="idref" href="Chapter5.html#optExp:220"><span class="id" title="definition">optExp</span></a> <span class="id" title="var">e1</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="e2':223" class="idref" href="#e2':223"><span class="id" title="binder">e2'</span></a> := <a class="idref" href="Chapter5.html#optExp:220"><span class="id" title="definition">optExp</span></a> <span class="id" title="var">e2</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#e1':222"><span class="id" title="variable">e1'</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#E_Const"><span class="id" title="constructor">E_Const</span></a> 0 ⇒ <a class="idref" href="Chapter5.html#e2':223"><span class="id" title="variable">e2'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <a class="idref" href="Chapter5.html#E_Plus"><span class="id" title="constructor">E_Plus</span></a> <a class="idref" href="Chapter5.html#e1':222"><span class="id" title="variable">e1'</span></a> <a class="idref" href="Chapter5.html#e2':223"><span class="id" title="variable">e2'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="optCmd" class="idref" href="#optCmd"><span class="id" title="definition">optCmd</span></a> (<a id="c:225" class="idref" href="#c:225"><span class="id" title="binder">c</span></a> : <a class="idref" href="Chapter5.html#cmd"><span class="id" title="inductive">cmd</span></a>) : <a class="idref" href="Chapter5.html#cmd"><span class="id" title="inductive">cmd</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="Chapter5.html#c:225"><span class="id" title="variable">c</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> <span class="id" title="var">v</span> <span class="id" title="var">e</span> ⇒ <a class="idref" href="Chapter5.html#C_Asgn"><span class="id" title="constructor">C_Asgn</span></a> <span class="id" title="var">v</span> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <span class="id" title="var">e</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_Seq"><span class="id" title="constructor">C_Seq</span></a> <span class="id" title="var">c1</span> <span class="id" title="var">c2</span> ⇒ <a class="idref" href="Chapter5.html#C_Seq"><span class="id" title="constructor">C_Seq</span></a> (<a class="idref" href="Chapter5.html#optCmd:226"><span class="id" title="definition">optCmd</span></a> <span class="id" title="var">c1</span>) (<a class="idref" href="Chapter5.html#optCmd:226"><span class="id" title="definition">optCmd</span></a> <span class="id" title="var">c2</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> <span class="id" title="var">cond</span> <span class="id" title="var">body</span> ⇒ <a class="idref" href="Chapter5.html#C_While"><span class="id" title="constructor">C_While</span></a> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <span class="id" title="var">cond</span>) (<a class="idref" href="Chapter5.html#optCmd:226"><span class="id" title="definition">optCmd</span></a> <span class="id" title="var">body</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab46"></a><h2 class="section">Q: Prove <span class="inlinecode"><span class="id" title="var">optExp</span></span> correct.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="optExp_correct_v1" class="idref" href="#optExp_correct_v1"><span class="id" title="lemma">optExp_correct_v1</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:228" class="idref" href="#vs:228"><span class="id" title="binder">vs</span></a> <a id="e:229" class="idref" href="#e:229"><span class="id" title="binder">e</span></a>, <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:228"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <a class="idref" href="Chapter5.html#e:229"><span class="id" title="variable">e</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:228"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#e:229"><span class="id" title="variable">e</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <span class="id" title="var">e1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IHe2</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe2</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe2</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">IHe2</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="optExp_correct_v2" class="idref" href="#optExp_correct_v2"><span class="id" title="lemma">optExp_correct_v2</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:230" class="idref" href="#vs:230"><span class="id" title="binder">vs</span></a> <a id="e:231" class="idref" href="#e:231"><span class="id" title="binder">e</span></a>, <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:230"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <a class="idref" href="Chapter5.html#e:231"><span class="id" title="variable">e</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:230"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#e:231"><span class="id" title="variable">e</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>; <span class="id" title="var">crush</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;(<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;| [|- <span class="id" title="keyword">context</span>[ <span class="id" title="keyword">match</span> ?<span class="id" title="var">E</span> <span class="id" title="keyword">with</span> <a class="idref" href="Chapter5.html#E_Const"><span class="id" title="constructor">E_Const</span></a> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">_</span> | <span class="id" title="var">_</span> ⇒ <span class="id" title="var">_</span> <span class="id" title="keyword">end</span>]] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">E</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span> ); <span class="id" title="var">crush</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;(<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;| [|- <span class="id" title="keyword">context</span>[ <span class="id" title="keyword">match</span> ?<span class="id" title="var">E</span> <span class="id" title="keyword">with</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> ⇒ <span class="id" title="var">_</span> | <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">_</span> <span class="id" title="keyword">end</span>]] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">E</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span> ); <span class="id" title="var">crush</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="optExp_correct" class="idref" href="#optExp_correct"><span class="id" title="lemma">optExp_correct</span></a> : <span class="id" title="keyword">∀</span> <a id="vs:232" class="idref" href="#vs:232"><span class="id" title="binder">vs</span></a> <a id="e:233" class="idref" href="#e:233"><span class="id" title="binder">e</span></a>, <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:232"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#optExp"><span class="id" title="definition">optExp</span></a> <a class="idref" href="Chapter5.html#e:233"><span class="id" title="variable">e</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#evalExp"><span class="id" title="definition">evalExp</span></a> <a class="idref" href="Chapter5.html#vs:232"><span class="id" title="variable">vs</span></a> <a class="idref" href="Chapter5.html#e:233"><span class="id" title="variable">e</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>; <span class="id" title="var">crush</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;| [|- <span class="id" title="keyword">context</span>[ <span class="id" title="keyword">match</span> ?<span class="id" title="var">E</span> <span class="id" title="keyword">with</span> <a class="idref" href="Chapter5.html#E_Const"><span class="id" title="constructor">E_Const</span></a> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">_</span> | <span class="id" title="var">_</span>   ⇒ <span class="id" title="var">_</span> <span class="id" title="keyword">end</span>]] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">E</span><br/>
+&nbsp;&nbsp;| [|- <span class="id" title="keyword">context</span>[ <span class="id" title="keyword">match</span> ?<span class="id" title="var">E</span> <span class="id" title="keyword">with</span> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a>         ⇒ <span class="id" title="var">_</span> | <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">_</span> <span class="id" title="keyword">end</span>]] ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">E</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="var">crush</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Rewrite</span> <a class="idref" href="Chapter5.html#optExp_correct"><span class="id" title="lemma">optExp_correct</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab47"></a><h2 class="section">Q: BONUS: Prove <span class="inlinecode"><span class="id" title="var">optCmd</span></span> correct (left unexplained in the book).</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">finisher</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| [<span class="id" title="var">H</span> : <a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> |- <span class="id" title="var">_</span>] ⇒ (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; []) ||<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; [|])<br/>
+&nbsp;&nbsp;); <span class="id" title="tactic">subst</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="var">crush</span>; <span class="id" title="tactic">eauto</span> 10.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="optCmd_correct1" class="idref" href="#optCmd_correct1"><span class="id" title="lemma">optCmd_correct1</span></a> : <span class="id" title="keyword">∀</span> <a id="vs1:234" class="idref" href="#vs1:234"><span class="id" title="binder">vs1</span></a> <a id="vs2:235" class="idref" href="#vs2:235"><span class="id" title="binder">vs2</span></a> <a id="c:236" class="idref" href="#c:236"><span class="id" title="binder">c</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:234"><span class="id" title="variable">vs1</span></a> <a class="idref" href="Chapter5.html#c:236"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs2:235"><span class="id" title="variable">vs2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:234"><span class="id" title="variable">vs1</span></a> (<a class="idref" href="Chapter5.html#optCmd"><span class="id" title="definition">optCmd</span></a> <a class="idref" href="Chapter5.html#c:236"><span class="id" title="variable">c</span></a>) <a class="idref" href="Chapter5.html#vs2:235"><span class="id" title="variable">vs2</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#evalCmd_coind"><span class="id" title="lemma">evalCmd_coind</span></a> (<span class="id" title="keyword">fun</span> <a id="vs1:237" class="idref" href="#vs1:237"><span class="id" title="binder"><span id="vs1:241" class="id">vs1</span></span></a> <a id="c':238" class="idref" href="#c':238"><span class="id" title="binder"><span id="c':242" class="id">c'</span></span></a> <a id="vs2:239" class="idref" href="#vs2:239"><span class="id" title="binder"><span id="vs2:243" class="id">vs2</span></span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <a id="c:240" class="idref" href="#c:240"><span class="id" title="binder"><span id="c:244" class="id">c</span></span></a><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:237"><span class="id" title="variable">vs1</span></a> <a class="idref" href="Chapter5.html#c:240"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs2:239"><span class="id" title="variable">vs2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="Chapter5.html#c':238"><span class="id" title="variable">c'</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Chapter5.html#optCmd"><span class="id" title="definition">optCmd</span></a> <a class="idref" href="Chapter5.html#c:240"><span class="id" title="variable">c</span></a><br/>
+&nbsp;&nbsp;)); <span class="id" title="tactic">eauto</span>; <span class="id" title="var">crush</span>;<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">try</span> <span class="id" title="tactic">discriminate</span> <span class="id" title="var">H2</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">injection</span> <span class="id" title="var">H2</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">subst</span>; <span class="id" title="var">finisher</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="optCmd_correct2" class="idref" href="#optCmd_correct2"><span class="id" title="lemma">optCmd_correct2</span></a> : <span class="id" title="keyword">∀</span> <a id="vs1:245" class="idref" href="#vs1:245"><span class="id" title="binder">vs1</span></a> <a id="vs2:246" class="idref" href="#vs2:246"><span class="id" title="binder">vs2</span></a> <a id="c:247" class="idref" href="#c:247"><span class="id" title="binder">c</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:245"><span class="id" title="variable">vs1</span></a> (<a class="idref" href="Chapter5.html#optCmd"><span class="id" title="definition">optCmd</span></a> <a class="idref" href="Chapter5.html#c:247"><span class="id" title="variable">c</span></a>) <a class="idref" href="Chapter5.html#vs2:246"><span class="id" title="variable">vs2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:245"><span class="id" title="variable">vs1</span></a> <a class="idref" href="Chapter5.html#c:247"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs2:246"><span class="id" title="variable">vs2</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Check</span> <a class="idref" href="Chapter5.html#evalCmd_coind"><span class="id" title="lemma">evalCmd_coind</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<a class="idref" href="Chapter5.html#evalCmd_coind"><span class="id" title="lemma">evalCmd_coind</span></a> (<span class="id" title="keyword">fun</span> <a id="vs:248" class="idref" href="#vs:248"><span class="id" title="binder"><span id="vs:251" class="id">vs</span></span></a> <a id="c:249" class="idref" href="#c:249"><span class="id" title="binder"><span id="c:252" class="id">c</span></span></a> <a id="vs':250" class="idref" href="#vs':250"><span class="id" title="binder"><span id="vs':253" class="id">vs'</span></span></a> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs:248"><span class="id" title="variable">vs</span></a> (<a class="idref" href="Chapter5.html#optCmd"><span class="id" title="definition">optCmd</span></a> <a class="idref" href="Chapter5.html#c:249"><span class="id" title="variable">c</span></a>) <a class="idref" href="Chapter5.html#vs':250"><span class="id" title="variable">vs'</span></a><br/>
+&nbsp;&nbsp;)); <span class="id" title="tactic">eauto</span>; <span class="id" title="var">crush</span>; <span class="id" title="var">finisher</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="optCmd_correct" class="idref" href="#optCmd_correct"><span class="id" title="lemma">optCmd_correct</span></a> : <span class="id" title="keyword">∀</span> <a id="vs1:254" class="idref" href="#vs1:254"><span class="id" title="binder">vs1</span></a> <a id="vs2:255" class="idref" href="#vs2:255"><span class="id" title="binder">vs2</span></a> <a id="c:256" class="idref" href="#c:256"><span class="id" title="binder">c</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:254"><span class="id" title="variable">vs1</span></a> (<a class="idref" href="Chapter5.html#optCmd"><span class="id" title="definition">optCmd</span></a> <a class="idref" href="Chapter5.html#c:256"><span class="id" title="variable">c</span></a>) <a class="idref" href="Chapter5.html#vs2:255"><span class="id" title="variable">vs2</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">↔</span></a> <a class="idref" href="Chapter5.html#evalCmd"><span class="id" title="inductive">evalCmd</span></a> <a class="idref" href="Chapter5.html#vs1:254"><span class="id" title="variable">vs1</span></a> <a class="idref" href="Chapter5.html#c:256"><span class="id" title="variable">c</span></a> <a class="idref" href="Chapter5.html#vs2:255"><span class="id" title="variable">vs2</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intuition</span>; <span class="id" title="tactic">apply</span> <a class="idref" href="Chapter5.html#optCmd_correct1"><span class="id" title="lemma">optCmd_correct1</span></a> || <span class="id" title="tactic">apply</span> <a class="idref" href="Chapter5.html#optCmd_correct2"><span class="id" title="lemma">optCmd_correct2</span></a>; <span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Check</span> 0.<br/>
+
+<br/>
+</div>
+<hr/>This page has been generated by <a href="http://rocq-prover.org/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

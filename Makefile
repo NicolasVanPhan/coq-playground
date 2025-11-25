@@ -3,7 +3,7 @@
 # Tools
 COQC      ?= rocq c
 COQDOC    ?= rocq doc
-COQDEP    ?= coqdep
+COQDEP    ?= rocq dep
 
 # Flags
 COQFLAGS  ?= -q
