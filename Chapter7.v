@@ -93,11 +93,15 @@ Print Acc.
 Lemma noBadChain : forall (A : Set) (x : A) R, Acc R x -> 
 ~(exists s, infiniteDecreasingChain R (Cons x s)).
 Proof.
-  induction 1; crush.
+  intros.
+  unfold not.
+  induction H as [x Hacc IH].
+  intro Hcontra.
+  inversion Hcontra.
   match goal with
   | [H : infiniteDecreasingChain _ _ |- _ ] => inversion H
   end.
-  eauto.
+  eapply IH; eauto.
 Qed.
 
   (**
@@ -108,6 +112,35 @@ Qed.
   no no it's stronger than that, 
   it doesn't just say there exists 1 chain,
   it says ALL chains preceding x are FINITE.
+
+
+
+  By induction on the [Acc x] property.
+
+            [?n] is accessible
+  IH      --------------------------------
+            (H?n: exists inf-decr-chain to ?n) -> False
+
+            [-1] is accessible
+  Goal    -------------------------------
+            (H1: exists inf-decr-chain to -1) -> False
+
+
+  In other words :
+  Acc ?n
+  IH: inf-decr-chain-to  ?n  -> False
+  Acc -1
+  H1 : inf-decr-chain-to  -1
+  ------------------------
+  False
+
+  Apply IH, and to prove there's an inf-decr-chain-to ?n,
+  you have to destruct the inf-decr-chain to -1.
+  It will hive you inf-decr-chain --R--> -2 --R--> -1
+  Then you exhibit -2 as the ?n and you're done.
+
+
+
   *)
 
 (** A [well_founded] relation is a relation [R]
@@ -199,7 +232,7 @@ Section mergeSort.
 
    
   Theorem lengthOrder_wf : well_founded lengthOrder.
-  Proof. red; intro; eapply lengthOrder_wf'; eauto. Defined.
+Proof. red; intro; eapply lengthOrder_wf'; eauto. Defined.
 
   Lemma split_wf : forall len ls, 2 <= length ls <= len ->
     let (ls1, ls2) := split ls in lengthOrder ls1 ls /\ lengthOrder ls2 ls.
@@ -213,7 +246,7 @@ Section mergeSort.
     specialize (IH L); destruct (split L); destruct IH
     end; crush).
 
-  Qed.
+  Defined.
 
 
   Ltac split_wf := intros ls ?; intros; generalize (@split_wf (length ls) ls);
@@ -222,7 +255,7 @@ Section mergeSort.
   Lemma split_wf1 : forall ls, 2 <= length ls
   -> lengthOrder (fst (split ls)) ls.
   split_wf.
-  Defined.
+Defined.
 
   Lemma split_wf2 : forall ls, 2 <= length ls
   -> lengthOrder (snd (split ls)) ls.
@@ -263,7 +296,13 @@ Section mergeSort.
           merge (self (fst lss) _) (self (snd lss) _)
           else ls
       )
-    ); subst lss; eauto.
+    )
+    
+    (* This is the very spot where you link you custom function
+    to the general well-foundedness property guaranteeing termination.
+    By proving here that all your recursive calls are "R-bound".
+    *)
+    ; subst lss; eauto.
   Defined.
 
 End mergeSort.
