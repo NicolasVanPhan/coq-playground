@@ -447,3 +447,312 @@ Remember the outline of the proof :
   reflexivity.
 Qed.
  
+(**
+  Now the other way around, from N to vec and back.
+  Let's outline the proof of N_of_vec _ (vec_of_N _ n) = n
+  
+  First, is it true ?
+  [n] can encode any number up to infinity, but vec cannot, it's limited by its width.
+  imagine encoding 255 to a 3-bit vector, you'll get [1; 1; 1],
+  which coverts back to 7 (and not 255).
+  In the roundtrip, the 'bits above the MSB' are lost.
+
+  We should re-state the theorem to account for this.
+  But how will we restate it ?
+  Let's first try to write the inductive proof to see which rewrite will best suit the proof.
+
+
+  N_of_vec _ (vec_of_N _ n)
+= N_of_vec _ (vec_of_pos _ p)    // ignoring the N0 case here as it will be trivial.
+
+We'll have 5 case to handle now, because of the 5 clauses in the [vec_of_pos] match statement.
+
+---- case 1 - width 0
+
+...
+= N_of_vec _ (vec_of_pos 0 p)   
+= N_of_vec _ (Vector.nil))   
+= N_of_vec _ (Vector.nil))   
+= 0%N
+!= Npos p
+As is, the statement is incorrect.
+the roundtrip doesn't make us go back to [p] but to [0] here.
+
+The truncation can be expressed as : p mod (2^w).
+In this case, p mod (2^0) = p mod 1 = 0
+This is a match !
+
+We can add [N < 2^w] as a general precondition to our theorem.
+In this case (width 0), the precondition will become :
+[N < 2^0] i.e. [N < 1] i.e. [N = 0] i.e. [Npos p = 0]
+Which will bring our missing equality above !
+
+Precond : [N < 2 ^ w]
+
+---- case 2 - p = None
+
+left
+...
+= N_of_vec (S w') (vec_of_pos (S w') None)   
+= N_of_vec _ (vec_of_pos (S w') None)   
+= N_of_vec _ ( Vector.cons b0 _ (vec_of_pos w' None]) )    // eval vec_of_pos
+= (b2n b0) + 2 * (N_of_vec (vec_of_pos w' None))           // eval N_of_vec
+= 2 * (N_of_vec _ (vec_of_pos w' None))                    // 0 + x = x
+= 2 * p                                                    // IH 
+!= p
+
+How come we get stuck here ?
+The intuition is that, at this point of the recursion on [vec_of_pos],
+the rest of the vector to convert is all zeroes, so the mutliplication by 2 doesn't break the equality.
+But how to convey this in the proof ?
+
+Well, let's go back and see how vec_of_pos will appear in our proof.
+It is called by [vec_of_N], and if we go back to its definition...
+we see that we always call [vec_of_pos] with [Some p],
+so the [None] case won't ever appear in our proof.
+
+so let's skip this non-existent case and go to case 3.
+
+---- case 3 : p = xH
+
+There's no IH since p = xH here, there's no inner [p'].
+
+left
+= N_of_vec (S w') (vec_of_pos (S w') (Some xH))   
+= N_of_vec (S w') (Vector.cons _ b1 w' (vec_of_pos w' None))      // unfold vec_of_pos
+= (b1n b1) + 2 * ( N_of_vec w' (vec_of_pos w' None))              // unfold N_of_vec
+= (b1n b1) + 2 * ( N_of_vec w' (vec_zeroes w' ))                  // apply vec_z
+= (b1n b1) + 2 * ( N_of_vec w' (vec_zeroes w' ))                  // apply some easy lemma [n_of_zeroes]
+= 1%N      + 2 * 0%N
+= 1%N
+= Npos (xH)
+= Npos (p)
+QED !
+
+---- case 4 : p = x0 p'
+
+IH : N_of_vec _ (vec_of_pos _ (Some p')) = Npos p'
+
+left
+= N_of_vec (S w') (vec_of_pos (S w') (Some x0 p'))   
+= N_of_vec (S w') (Vector.cons _ b0 w' (vec_of_pos (Some p')))   // eval vec_of_pos
+= (b2n b0) w' + 2 * (N_of_vec (vec_of_pos (Some p')))            // eval vec_of_pos
+= 0%N + 2 * (Npos p')                                            // IH
+= 2 * (Npos p')                                                  // 0 + x = x
+= Npos (x0 p')                                                   // some trivial unnamed lemma 
+= Npos p
+QED
+
+---- case 5 : p = x1 p'
+
+It will go almost exactly the same as case 4, except at the end,
+where the trivial unnamed lemma won't be [2 * (Npos p) = Npos (x0 p)],
+but rather [1 + 2 * (Npos p) = Npos (x1 p)] :
+
+...
+= 1%N + 2 * (Npos p')                                            // IH
+= 1 + 2 * (Npos p')                                              // 0 + x = x
+= Npos (x1 p')                                                   // some other trivial unnamed lemma 
+= Npos p
+QED
+
+*)
+
+(**
+We can start with the little lemma :
+*)
+
+Lemma n_of_zeroes : forall w, N_of_vec w (vec_zeroes w) = 0%N.
+Proof.
+  induction w; simpl; try rewrite IHw; reflexivity.
+Qed.
+
+
+Require Import Lia.
+
+
+
+
+
+
+
+
+
+Lemma annoying_precond_xO : forall p w,
+  N.pos (xO p) < 2 ^ N.of_nat (S w) -> N.pos p < 2 ^ (N.of_nat w).
+Proof.
+  intros.
+
+  assert (Hrw : N.pos p~0 = 2 * (N.pos p)).
+  { nia. }
+  rewrite Hrw in H. clear Hrw.
+
+  assert (Hrw : forall x, N.succ (N.of_nat x) = N.of_nat (S x)).
+  { intro. nia. }
+  rewrite <- (Hrw w) in H. clear Hrw.
+
+  assert (Hrw : 2 ^ N.succ (N.of_nat w) = 2 * (2 ^ N.of_nat w)).
+  { rewrite <- N.pow_succ_r.
+    - reflexivity.
+    - lia.
+  }
+  rewrite Hrw in H. clear Hrw.
+
+  assert (Hrw : forall n m : N, 2 * n < 2 * m -> n < m).
+  { nia. }
+  apply Hrw in H.
+
+  assumption.
+Qed.
+
+
+Lemma annoying_precond_xI : forall p w,
+  N.pos (xI p) < 2 ^ N.of_nat (S w) -> N.pos p < 2 ^ (N.of_nat w).
+Proof.
+  intros.
+  apply annoying_precond_xO.
+  apply N.le_lt_trans with (m := N.pos p~1).
+  - nia.
+  - assumption.
+Qed.
+
+
+
+Lemma vec_N_roundtrip_0 : forall w, N_of_vec w (vec_of_N w 0) = 0.
+Proof.
+  induction w.
+  - simpl. reflexivity.
+  - simpl in IHw.
+  simpl.
+  rewrite IHw.
+  reflexivity.
+Qed.
+
+Theorem vec_N_roundtrip :
+  forall (w : nat)
+         (n : N)
+         (Htrunc : n < 2%N ^ (N.of_nat w)),
+  N_of_vec w (vec_of_N w n) = n.
+Proof.
+  intros.
+  destruct n.
+  (* N = 0*)
+  { simpl. apply n_of_zeroes. }
+  (* N = Npos p *)
+  {
+    (* destruct w eqn:Hw.
+    (* case 1 : w = 0 *)
+    { simpl. destruct p; try inversion Htrunc; try reflexivity. }
+   *)
+    (* other cases (w = S w') *)
+
+    (* We need an IH forall w, otherwise we won't be able to apply it later,
+    because the too struct IH will be true for [S w'] only, and we'll need it for [w'] *)
+    generalize dependent w.
+    induction p.
+
+    - (* p = xI p' *)
+      destruct w eqn:Hw.
+      { simpl. intro Hcontra. inversion Hcontra. }
+      { rename n into w'.
+      (* Turns out there will be a bit of N-arith to do to make our IH truly available *)
+
+      unfold vec_of_N.
+
+        assert (Hrw1: vec_of_pos (S w') (Some (p~1)%positive) = 
+          Vector.cons _ b1 w' (vec_of_pos w' (Some p%positive))).
+        { simpl. reflexivity. }
+        rewrite Hrw1.
+
+        assert (Hrw2: forall b,
+             N_of_vec (S w') (cons bit b w' (vec_of_pos w' (Some p)))
+          = (b2n b) + 2 * (N_of_vec w' (vec_of_pos w' (Some p)))).
+        { destruct b; reflexivity. }
+
+        rewrite Hrw2.
+
+        assert (Hrw3 : vec_of_N (S w') (N.pos p) = vec_of_pos (S w') (Some p)).
+        { reflexivity. }
+
+
+        intro Hle.
+        rewrite IHp.
+        { (* main proof continuing *)
+          simpl. reflexivity.
+        }
+
+        (* The main proof is done,
+        now we need this annoying precondition to pass :
+        xI p < 2 ^ (w + 1) ->
+        p    < 2 ^ w
+        *)
+        Check annoying_precond_xI.
+        apply annoying_precond_xI.
+        assumption.
+      }
+
+  - (* p = xO p' *)
+      destruct w eqn:Hw.
+      { simpl. intro Hcontra. inversion Hcontra. }
+      { rename n into w'.
+      (* Turns out there will be a bit of N-arith to do to make our IH truly available *)
+
+      unfold vec_of_N.
+
+        assert (Hrw1: vec_of_pos (S w') (Some (p~0)%positive) = 
+          Vector.cons _ b0 w' (vec_of_pos w' (Some p%positive))).
+        { simpl. reflexivity. }
+        rewrite Hrw1.
+
+        assert (Hrw2: forall b,
+             N_of_vec (S w') (cons bit b w' (vec_of_pos w' (Some p)))
+          = (b2n b) + 2 * (N_of_vec w' (vec_of_pos w' (Some p)))).
+        { destruct b; reflexivity. }
+
+        rewrite Hrw2.
+
+        assert (Hrw3 : vec_of_N (S w') (N.pos p) = vec_of_pos (S w') (Some p)).
+        { reflexivity. }
+
+
+        intro Hle.
+        rewrite IHp.
+        { (* main proof continuing *)
+          simpl. reflexivity.
+        }
+
+        (* The main proof is done,
+        now we need this annoying precondition to pass :
+        xI p < 2 ^ (w + 1) ->
+        p    < 2 ^ w
+        *)
+        apply annoying_precond_xO.
+        assumption.
+      }
+
+      - (* p = xH *)
+      intros.
+      induction w.
+      + inversion Htrunc.
+      + { 
+        Check Vector.cons.
+
+        assert (Hrw : vec_of_N (S w) 1 = Vector.cons _ b1 w (vec_of_N w 0)).
+        { simpl. rewrite vec_z. reflexivity. }
+        rewrite Hrw. clear Hrw.
+
+        assert (Hrw : forall b w v, N_of_vec (S w) (cons _ b w v)
+         = (b2n b) + 2 * (N_of_vec w v)).
+        { auto. } 
+        rewrite Hrw. clear Hrw.
+
+        rewrite vec_N_roundtrip_0.
+        simpl.
+        reflexivity.
+      }
+  }
+
+Qed.
+
+
+
