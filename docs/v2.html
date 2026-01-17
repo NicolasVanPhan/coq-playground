@@ -669,7 +669,7 @@ We can start with the little lemma :
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Theorem</span> <a id="vec_N_roundtrip" class="idref" href="#vec_N_roundtrip"><span class="id" title="lemma">vec_N_roundtrip</span></a> :<br/>
+<span class="id" title="keyword">Theorem</span> <a id="vec_N_roundtrip_v1" class="idref" href="#vec_N_roundtrip_v1"><span class="id" title="lemma">vec_N_roundtrip_v1</span></a> :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<a id="w:44" class="idref" href="#w:44"><span class="id" title="binder">w</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="n:45" class="idref" href="#n:45"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#N"><span class="id" title="inductive">N</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="Htrunc:46" class="idref" href="#Htrunc:46"><span class="id" title="binder">Htrunc</span></a> : <a class="idref" href="v2.html#n:45"><span class="id" title="variable">n</span></a> <span class="id" title="notation">&lt;</span> 2%<span class="id" title="var">N</span> <span class="id" title="notation">^</span> <span class="id" title="notation">(</span><span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:44"><span class="id" title="variable">w</span></a><span class="id" title="notation">)</span>),<br/>
@@ -790,6 +790,212 @@ We can start with the little lemma :
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;}<br/>
 <br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Okay we have a proof that passes but it's quite messy.
+To clean it up, let's list the big steps and key lemmas :
+
+<div class="paragraph"> </div>
+
+1. destruct <span class="inlinecode"><span class="id" title="var">n</span></span> (just getting rid of the <span class="inlinecode"><span class="id" title="var">N0</span></span> case)
+2. generalize <span class="inlinecode"><span class="id" title="var">w</span></span> (to get a stronger inductive hypothesis later)
+3. induction over <span class="inlinecode"><span class="id" title="var">p</span></span>
+
+<div class="paragraph"> </div>
+
+3.1. For the <span class="inlinecode"><span class="id" title="var">xI</span></span> <span class="inlinecode"><span class="id" title="var">p'</span></span> and <span class="inlinecode"><span class="id" title="var">xO</span></span> <span class="inlinecode"><span class="id" title="var">p'</span></span> cases
+<ul class="doclist">
+<li> three rewrites unnamed lemmas
+
+</li>
+<li> one annoying lemma about the precondition.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+3.2 For the <span class="inlinecode"><span class="id" title="var">xH</span></span> case 
+<ul class="doclist">
+<li> two rewriting unnamed lemmas
+
+</li>
+<li> the roundtrip lemma for the <span class="inlinecode">0%<span class="id" title="var">N</span></span> case
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Let's first rewrite the unnamed lemma properly,
+maybe it will help clarify the proof.
+Also the proof for the <span class="inlinecode"><span class="id" title="var">xI</span></span> and <span class="inlinecode"><span class="id" title="var">xO</span></span> case are almost identical,
+there is room for refactoring here.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="append_lsb" class="idref" href="#append_lsb"><span class="id" title="definition">append_lsb</span></a> (<a id="p:57" class="idref" href="#p:57"><span class="id" title="binder">p</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>) (<a id="b:58" class="idref" href="#b:58"><span class="id" title="binder">b</span></a> : <a class="idref" href="v2.html#bit"><span class="id" title="inductive">bit</span></a>) : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="v2.html#b:58"><span class="id" title="variable">b</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="v2.html#b0"><span class="id" title="constructor">b0</span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#xO"><span class="id" title="constructor">xO</span></a> <a class="idref" href="v2.html#p:57"><span class="id" title="variable">p</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="v2.html#b1"><span class="id" title="constructor">b1</span></a> ⇒ <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#xI"><span class="id" title="constructor">xI</span></a> <a class="idref" href="v2.html#p:57"><span class="id" title="variable">p</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="rw_vec_of_pos__lsb" class="idref" href="#rw_vec_of_pos__lsb"><span class="id" title="lemma">rw_vec_of_pos__lsb</span></a> : <span class="id" title="keyword">∀</span> <a id="w:60" class="idref" href="#w:60"><span class="id" title="binder">w</span></a> <a id="p:61" class="idref" href="#p:61"><span class="id" title="binder">p</span></a> <a id="b:62" class="idref" href="#b:62"><span class="id" title="binder">b</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="v2.html#vec_of_pos"><span class="id" title="definition">vec_of_pos</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#w:60"><span class="id" title="variable">w</span></a>) (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<a class="idref" href="v2.html#append_lsb"><span class="id" title="definition">append_lsb</span></a> <a class="idref" href="v2.html#p:61"><span class="id" title="variable">p</span></a> <a class="idref" href="v2.html#b:62"><span class="id" title="variable">b</span></a>)) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <br/>
+&nbsp;&nbsp;<span class="id" title="constructor">Vector.cons</span> <span class="id" title="var">_</span> <a class="idref" href="v2.html#b:62"><span class="id" title="variable">b</span></a> <a class="idref" href="v2.html#w:60"><span class="id" title="variable">w</span></a> (<a class="idref" href="v2.html#vec_of_pos"><span class="id" title="definition">vec_of_pos</span></a> <a class="idref" href="v2.html#w:60"><span class="id" title="variable">w</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="v2.html#p:61"><span class="id" title="variable">p</span></a>%<span class="id" title="var">positive</span>)).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="rw_N_of_vec__cons" class="idref" href="#rw_N_of_vec__cons"><span class="id" title="lemma">rw_N_of_vec__cons</span></a> : <span class="id" title="keyword">∀</span> <a id="w:63" class="idref" href="#w:63"><span class="id" title="binder">w</span></a> <a id="v:64" class="idref" href="#v:64"><span class="id" title="binder">v</span></a> <a id="b:65" class="idref" href="#b:65"><span class="id" title="binder">b</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="v2.html#N_of_vec"><span class="id" title="definition">N_of_vec</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#w:63"><span class="id" title="variable">w</span></a>) (<span class="id" title="constructor">cons</span> <a class="idref" href="v2.html#bit"><span class="id" title="inductive">bit</span></a> <a class="idref" href="v2.html#b:65"><span class="id" title="variable">b</span></a> <a class="idref" href="v2.html#w:63"><span class="id" title="variable">w</span></a> <a class="idref" href="v2.html#v:64"><span class="id" title="variable">v</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="notation">(</span><a class="idref" href="v2.html#b2n"><span class="id" title="definition">b2n</span></a> <a class="idref" href="v2.html#b:65"><span class="id" title="variable">b</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">+</span> 2 <span class="id" title="notation">×</span> <span class="id" title="notation">(</span><a class="idref" href="v2.html#N_of_vec"><span class="id" title="definition">N_of_vec</span></a> <a class="idref" href="v2.html#w:63"><span class="id" title="variable">w</span></a> <a class="idref" href="v2.html#v:64"><span class="id" title="variable">v</span></a><span class="id" title="notation">)</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="rw_vec_of_N_vec_of_pos" class="idref" href="#rw_vec_of_N_vec_of_pos"><span class="id" title="lemma">rw_vec_of_N_vec_of_pos</span></a> : <span class="id" title="keyword">∀</span> <a id="w:66" class="idref" href="#w:66"><span class="id" title="binder">w</span></a> <a id="p:67" class="idref" href="#p:67"><span class="id" title="binder">p</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> <a class="idref" href="v2.html#w:66"><span class="id" title="variable">w</span></a> (<span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:67"><span class="id" title="variable">p</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="v2.html#vec_of_pos"><span class="id" title="definition">vec_of_pos</span></a> <a class="idref" href="v2.html#w:66"><span class="id" title="variable">w</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="v2.html#p:67"><span class="id" title="variable">p</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="append_bound_b0" class="idref" href="#append_bound_b0"><span class="id" title="lemma">append_bound_b0</span></a> : <span class="id" title="keyword">∀</span> <a id="p:68" class="idref" href="#p:68"><span class="id" title="binder">p</span></a> <a id="w:69" class="idref" href="#w:69"><span class="id" title="binder">w</span></a>,<br/>
+&nbsp;&nbsp;<span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#xO"><span class="id" title="constructor">xO</span></a> <a class="idref" href="v2.html#p:68"><span class="id" title="variable">p</span></a>) <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#w:69"><span class="id" title="variable">w</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:68"><span class="id" title="variable">p</span></a> <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="notation">(</span><span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:69"><span class="id" title="variable">w</span></a><span class="id" title="notation">)</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hrw</span> : <span class="id" title="abbreviation">N.pos</span> <span class="id" title="var">p</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.BinNums.PosDef.html#35713fcadfdd66af247cbf95acf859fa"><span class="id" title="notation">~0</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 2 <span class="id" title="notation">×</span> <span class="id" title="notation">(</span><span class="id" title="abbreviation">N.pos</span> <span class="id" title="var">p</span><span class="id" title="notation">)</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="var">nia</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hrw</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">Hrw</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hrw</span> : <span class="id" title="keyword">∀</span> <a id="x:70" class="idref" href="#x:70"><span class="id" title="binder"><span id="x:71" class="id">x</span></span></a>, <span class="id" title="definition">N.succ</span> (<span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#x:70"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="definition">N.of_nat</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#x:70"><span class="id" title="variable">x</span></a>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span>. <span class="id" title="var">nia</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">Hrw</span> <span class="id" title="var">w</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">Hrw</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hrw</span> : 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.succ</span> (<span class="id" title="definition">N.of_nat</span> <span class="id" title="var">w</span>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> 2 <span class="id" title="notation">×</span> <span class="id" title="notation">(</span>2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> <span class="id" title="var">w</span><span class="id" title="notation">)</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="lemma">N.pow_succ_r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">lia</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hrw</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">Hrw</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hrw</span> : <span class="id" title="keyword">∀</span> <a id="n:72" class="idref" href="#n:72"><span class="id" title="binder"><span id="n:74" class="id">n</span></span></a> <a id="m:73" class="idref" href="#m:73"><span class="id" title="binder"><span id="m:75" class="id">m</span></span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#N"><span class="id" title="inductive">N</span></a>, 2 <span class="id" title="notation">×</span> <a class="idref" href="v2.html#n:72"><span class="id" title="variable">n</span></a> <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">×</span> <a class="idref" href="v2.html#m:73"><span class="id" title="variable">m</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="v2.html#n:72"><span class="id" title="variable">n</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="v2.html#m:73"><span class="id" title="variable">m</span></a>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="var">nia</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hrw</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="append_bound_b1" class="idref" href="#append_bound_b1"><span class="id" title="lemma">append_bound_b1</span></a> : <span class="id" title="keyword">∀</span> <a id="p:76" class="idref" href="#p:76"><span class="id" title="binder">p</span></a> <a id="w:77" class="idref" href="#w:77"><span class="id" title="binder">w</span></a>,<br/>
+&nbsp;&nbsp;<span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#xI"><span class="id" title="constructor">xI</span></a> <a class="idref" href="v2.html#p:76"><span class="id" title="variable">p</span></a>) <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#w:77"><span class="id" title="variable">w</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:76"><span class="id" title="variable">p</span></a> <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="notation">(</span><span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:77"><span class="id" title="variable">w</span></a><span class="id" title="notation">)</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="v2.html#append_bound_b0"><span class="id" title="lemma">append_bound_b0</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">N.le_lt_trans</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">m</span> := <span class="id" title="abbreviation">N.pos</span> <span class="id" title="var">p</span><a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.BinNums.PosDef.html#119ad21c8e0c4947cd973f1f72e5feea"><span class="id" title="notation">~1</span></a>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">nia</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="append_bound" class="idref" href="#append_bound"><span class="id" title="lemma">append_bound</span></a> : <span class="id" title="keyword">∀</span> <a id="p:78" class="idref" href="#p:78"><span class="id" title="binder">p</span></a> <a id="w:79" class="idref" href="#w:79"><span class="id" title="binder">w</span></a> <a id="b:80" class="idref" href="#b:80"><span class="id" title="binder">b</span></a>,<br/>
+&nbsp;&nbsp;<span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="v2.html#append_lsb"><span class="id" title="definition">append_lsb</span></a> <a class="idref" href="v2.html#p:78"><span class="id" title="variable">p</span></a> <a class="idref" href="v2.html#b:80"><span class="id" title="variable">b</span></a>) <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="v2.html#w:79"><span class="id" title="variable">w</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:78"><span class="id" title="variable">p</span></a> <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="notation">(</span><span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:79"><span class="id" title="variable">w</span></a><span class="id" title="notation">)</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span><br/>
+&nbsp;&nbsp;; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <a class="idref" href="v2.html#append_bound_b0"><span class="id" title="lemma">append_bound_b0</span></a><br/>
+&nbsp;&nbsp;; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <a class="idref" href="v2.html#append_bound_b1"><span class="id" title="lemma">append_bound_b1</span></a><br/>
+&nbsp;&nbsp;.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="vec_N_roundtrip_addbit_cases" class="idref" href="#vec_N_roundtrip_addbit_cases"><span class="id" title="lemma">vec_N_roundtrip_addbit_cases</span></a> : <span class="id" title="keyword">∀</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="b:81" class="idref" href="#b:81"><span class="id" title="binder">b</span></a> : <a class="idref" href="v2.html#bit"><span class="id" title="inductive">bit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="p:82" class="idref" href="#p:82"><span class="id" title="binder">p</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="IHp:84" class="idref" href="#IHp:84"><span class="id" title="binder">IHp</span></a> : <span class="id" title="keyword">∀</span> <a id="w:83" class="idref" href="#w:83"><span class="id" title="binder">w</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a> <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:83"><span class="id" title="variable">w</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="v2.html#N_of_vec"><span class="id" title="definition">N_of_vec</span></a> <a class="idref" href="v2.html#w:83"><span class="id" title="variable">w</span></a> (<a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> <a class="idref" href="v2.html#w:83"><span class="id" title="variable">w</span></a> (<span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a>)) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="abbreviation">N.pos</span> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <a id="w:85" class="idref" href="#w:85"><span class="id" title="binder">w</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>,<br/>
+&nbsp;&nbsp;<span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="v2.html#append_lsb"><span class="id" title="definition">append_lsb</span></a> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a> <a class="idref" href="v2.html#b:81"><span class="id" title="variable">b</span></a>) <span class="id" title="notation">&lt;</span> 2 <span class="id" title="notation">^</span> <span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:85"><span class="id" title="variable">w</span></a> <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;<a class="idref" href="v2.html#N_of_vec"><span class="id" title="definition">N_of_vec</span></a> <a class="idref" href="v2.html#w:85"><span class="id" title="variable">w</span></a> (<a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> <a class="idref" href="v2.html#w:85"><span class="id" title="variable">w</span></a> (<span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="v2.html#append_lsb"><span class="id" title="definition">append_lsb</span></a> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a> <a class="idref" href="v2.html#b:81"><span class="id" title="variable">b</span></a>))) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="abbreviation">N.pos</span> (<a class="idref" href="v2.html#append_lsb"><span class="id" title="definition">append_lsb</span></a> <a class="idref" href="v2.html#p:82"><span class="id" title="variable">p</span></a> <a class="idref" href="v2.html#b:81"><span class="id" title="variable">b</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span> <span class="id" title="var">p</span> <span class="id" title="var">IHp</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">w</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">Hw</span>.<br/>
+&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">Hcontra</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hcontra</span>; <span class="id" title="tactic">inversion</span> <span class="id" title="var">Hcontra</span>. }<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rename</span> <span class="id" title="var">n</span> <span class="id" title="var">into</span> <span class="id" title="var">w'</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="v2.html#rw_vec_of_pos__lsb"><span class="id" title="lemma">rw_vec_of_pos__lsb</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="v2.html#rw_N_of_vec__cons"><span class="id" title="lemma">rw_N_of_vec__cons</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<a class="idref" href="v2.html#rw_vec_of_N_vec_of_pos"><span class="id" title="lemma">rw_vec_of_N_vec_of_pos</span></a> <span class="id" title="var">w'</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Hprecond</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">IHp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+<div class="doc">
+Because we used the IH, we need to prove its precondition :
+          <code>
+</code>          the current precond : p~1 &lt; 2^(w+1)
+<hr/>
+
+          Goal (the IH precond) : p &lt; 2^w
+          &gt;&gt;
+      
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="v2.html#append_bound"><span class="id" title="lemma">append_bound</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">Hprecond</span>. <span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a id="vec_N_roundtrip" class="idref" href="#vec_N_roundtrip"><span class="id" title="lemma">vec_N_roundtrip</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<a id="w:86" class="idref" href="#w:86"><span class="id" title="binder">w</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="n:87" class="idref" href="#n:87"><span class="id" title="binder">n</span></a> : <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Numbers.BinNums.html#N"><span class="id" title="inductive">N</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="Htrunc:88" class="idref" href="#Htrunc:88"><span class="id" title="binder">Htrunc</span></a> : <a class="idref" href="v2.html#n:87"><span class="id" title="variable">n</span></a> <span class="id" title="notation">&lt;</span> 2%<span class="id" title="var">N</span> <span class="id" title="notation">^</span> <span class="id" title="notation">(</span><span class="id" title="definition">N.of_nat</span> <a class="idref" href="v2.html#w:86"><span class="id" title="variable">w</span></a><span class="id" title="notation">)</span>),<br/>
+&nbsp;&nbsp;<a class="idref" href="v2.html#N_of_vec"><span class="id" title="definition">N_of_vec</span></a> <a class="idref" href="v2.html#w:86"><span class="id" title="variable">w</span></a> (<a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> <a class="idref" href="v2.html#w:86"><span class="id" title="variable">w</span></a> <a class="idref" href="v2.html#n:87"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="v2.html#n:87"><span class="id" title="variable">n</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <a class="idref" href="v2.html#n_of_zeroes"><span class="id" title="lemma">n_of_zeroes</span></a>. }<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="tactic">dependent</span> <span class="id" title="var">w</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="v2.html#vec_N_roundtrip_addbit_cases"><span class="id" title="lemma">vec_N_roundtrip_addbit_cases</span></a> <a class="idref" href="v2.html#b1"><span class="id" title="constructor">b1</span></a> <span class="id" title="var">p</span> <span class="id" title="var">IHp</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="v2.html#vec_N_roundtrip_addbit_cases"><span class="id" title="lemma">vec_N_roundtrip_addbit_cases</span></a> <a class="idref" href="v2.html#b0"><span class="id" title="constructor">b0</span></a> <span class="id" title="var">p</span> <span class="id" title="var">IHp</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">w</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">inversion</span> <span class="id" title="var">Htrunc</span>. }<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hrw</span> : <a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> (<a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">w</span>) 1 <a class="idref" href="http://rocq-prover.org/doc/V9.1.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">Vector.cons</span> <span class="id" title="var">_</span> <a class="idref" href="v2.html#b1"><span class="id" title="constructor">b1</span></a> <span class="id" title="var">w</span> (<a class="idref" href="v2.html#vec_of_N"><span class="id" title="definition">vec_of_N</span></a> <span class="id" title="var">w</span> 0)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">rewrite</span> <a class="idref" href="v2.html#vec_z"><span class="id" title="lemma">vec_z</span></a>. <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hrw</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">Hrw</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="v2.html#rw_N_of_vec__cons"><span class="id" title="lemma">rw_N_of_vec__cons</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="v2.html#vec_N_roundtrip_0"><span class="id" title="lemma">vec_N_roundtrip_0</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;}<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>

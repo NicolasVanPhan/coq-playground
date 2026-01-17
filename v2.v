@@ -628,7 +628,7 @@ Proof.
   reflexivity.
 Qed.
 
-Theorem vec_N_roundtrip :
+Theorem vec_N_roundtrip_v1 :
   forall (w : nat)
          (n : N)
          (Htrunc : n < 2%N ^ (N.of_nat w)),
@@ -752,6 +752,172 @@ Proof.
       }
   }
 
+Qed.
+
+
+
+(**
+Okay we have a proof that passes but it's quite messy.
+To clean it up, let's list the big steps and key lemmas :
+
+1. destruct [n] (just getting rid of the [N0] case)
+2. generalize [w] (to get a stronger inductive hypothesis later)
+3. induction over [p]
+
+3.1. For the [xI p'] and [xO p'] cases
+- three rewrites unnamed lemmas
+- one annoying lemma about the precondition.
+
+3.2 For the [xH] case 
+- two rewriting unnamed lemmas
+- the roundtrip lemma for the [0%N] case
+
+Let's first rewrite the unnamed lemma properly,
+maybe it will help clarify the proof.
+Also the proof for the [xI] and [xO] case are almost identical,
+there is room for refactoring here.
+*)
+
+Definition append_lsb (p : positive) (b : bit) : positive :=
+  match b with
+  | b0 => xO p
+  | b1 => xI p
+  end.
+
+Lemma rw_vec_of_pos__lsb : forall w p b,
+  vec_of_pos (S w) (Some (append_lsb p b)) = 
+  Vector.cons _ b w (vec_of_pos w (Some p%positive)).
+Proof. destruct b; simpl; reflexivity. Qed.
+
+Lemma rw_N_of_vec__cons : forall w v b,
+  N_of_vec (S w) (cons bit b w v) =
+  (b2n b) + 2 * (N_of_vec w v).
+Proof. destruct b; reflexivity. Qed.
+
+Lemma rw_vec_of_N_vec_of_pos : forall w p,
+  vec_of_N w (N.pos p) = vec_of_pos w (Some p).
+Proof. reflexivity. Qed.
+
+
+
+Lemma append_bound_b0 : forall p w,
+  N.pos (xO p) < 2 ^ N.of_nat (S w) -> N.pos p < 2 ^ (N.of_nat w).
+Proof.
+  intros.
+
+  assert (Hrw : N.pos p~0 = 2 * (N.pos p)).
+  { nia. }
+  rewrite Hrw in H. clear Hrw.
+
+  assert (Hrw : forall x, N.succ (N.of_nat x) = N.of_nat (S x)).
+  { intro. nia. }
+  rewrite <- (Hrw w) in H. clear Hrw.
+
+  assert (Hrw : 2 ^ N.succ (N.of_nat w) = 2 * (2 ^ N.of_nat w)).
+  { rewrite <- N.pow_succ_r.
+    - reflexivity.
+    - lia.
+  }
+  rewrite Hrw in H. clear Hrw.
+
+  assert (Hrw : forall n m : N, 2 * n < 2 * m -> n < m).
+  { nia. }
+  apply Hrw in H.
+
+  assumption.
+Qed.
+
+
+Lemma append_bound_b1 : forall p w,
+  N.pos (xI p) < 2 ^ N.of_nat (S w) -> N.pos p < 2 ^ (N.of_nat w).
+Proof.
+  intros.
+  apply append_bound_b0.
+  apply N.le_lt_trans with (m := N.pos p~1).
+  - nia.
+  - assumption.
+Qed.
+
+Lemma append_bound : forall p w b,
+  N.pos (append_lsb p b) < 2 ^ N.of_nat (S w) -> N.pos p < 2 ^ (N.of_nat w).
+Proof.
+  destruct b
+  ; try apply append_bound_b0
+  ; try apply append_bound_b1
+  .
+Qed.
+ 
+
+Lemma vec_N_roundtrip_addbit_cases : forall
+      (b : bit)
+      (p : positive)
+      (IHp : forall w : nat,
+             N.pos p < 2 ^ N.of_nat w ->
+             N_of_vec w (vec_of_N w (N.pos p)) = N.pos p
+      ),
+  forall w : nat,
+  N.pos (append_lsb p b) < 2 ^ N.of_nat w ->
+  N_of_vec w (vec_of_N w (N.pos (append_lsb p b))) = N.pos (append_lsb p b).
+Proof.
+   intros b p IHp.
+   destruct w eqn:Hw.
+   { simpl. intro Hcontra. destruct b in Hcontra; inversion Hcontra. }
+   rename n into w'.
+
+    unfold vec_of_N.
+    (* change (Some (p~1)%positive) with (Some (append_lsb p b1)). *)
+    (* change (Some (p~0)%positive) with (Some (append_lsb p b0)). *)
+    rewrite rw_vec_of_pos__lsb.
+    rewrite rw_N_of_vec__cons.
+    rewrite <- (rw_vec_of_N_vec_of_pos w' p).
+    intro Hprecond.
+    rewrite IHp.
+    { simpl. destruct b; reflexivity. }
+      (** Because we used the IH, we need to prove its precondition :
+          <<
+          the current precond : p~1 < 2^(w+1)
+          ----
+          Goal (the IH precond) : p < 2^w
+          >>
+      *)
+    (* change ((p~1)%positive) with ((append_lsb p b1)) in Hprecond. *)
+    (* change ((p~0)%positive) with ((append_lsb p b0)) in Hprecond. *)
+    apply append_bound in Hprecond. assumption.
+Qed.
+
+Theorem vec_N_roundtrip :
+  forall (w : nat)
+         (n : N)
+         (Htrunc : n < 2%N ^ (N.of_nat w)),
+  N_of_vec w (vec_of_N w n) = n.
+Proof.
+  intros.
+  destruct n.
+  (* N = 0*)
+  { simpl. apply n_of_zeroes. }
+  (* N = Npos p *)
+  {
+    generalize dependent w.
+    induction p.
+
+    - (* p = xI p' *)
+      exact (vec_N_roundtrip_addbit_cases b1 p IHp).
+    - (* p = xO p' *)
+      exact (vec_N_roundtrip_addbit_cases b0 p IHp).
+
+    - (* p = xH *)
+      intros.
+      induction w.
+      { inversion Htrunc. }
+
+      assert (Hrw : vec_of_N (S w) 1 = Vector.cons _ b1 w (vec_of_N w 0)).
+      { simpl. rewrite vec_z. reflexivity. }
+      rewrite Hrw. clear Hrw.
+
+      rewrite rw_N_of_vec__cons.
+      rewrite vec_N_roundtrip_0.
+      reflexivity.
+  }
 Qed.
 
 
